@@ -66,4 +66,51 @@ public class Scheduler {
 		return events;
 
 	}
+	
+	/**
+	 * Creates an array list of events based on the size of the columns you want. 
+	 * @param schedulerList is a list of lists of events (One event list is the schedule for a day)
+	 * @param colDays is the amount of columns you want to include in the program (I.e. 7 days for a week, 28-31 for a month)
+	 * @return will return the full list of event lists to populate the schedule
+	 */
+	public ArrayList<ArrayList<Event>> generateWeek(ArrayList<ArrayList<Event>> schedulerList, Object[] colDays){
+		ArrayList<Event> scheduler = new ArrayList<Event>();
+		for (int i = 0; i < colDays.length; i++) {
+			scheduler = scheduleGenerator();
+			schedulerList.add(scheduler);
+			
+		}
+		return schedulerList;
+	}
+	/**
+	 * Creates a 2D object list that fills a schedule.
+	 * @param empList takes in a list of employees obtained from the employee table in the database
+	 * @param colDays is the number of columns planned on having
+	 * @param schedulerList is a list of lists of events (One event list is the schedule for a day)
+	 * @param data contains the size of the employee list and the amount of columns. Can be viewed as data[employee list size][column day length]
+	 * @return will return a fully populated 2D array of employees matched with venues
+	 */
+	public Object[][] fillSchedule(ArrayList<Employee> empList, Object[] colDays, ArrayList<ArrayList<Event>> schedulerList, Object[][] data){
+		ArrayList<Event> scheduler = new ArrayList<Event>();
+		for (int i = 0; i < empList.size(); i++) { // empList.size()
+			Employee employee = empList.get(i);
+
+			for (int fillDays = 0; fillDays < colDays.length; fillDays++) {
+				scheduler = schedulerList.get(fillDays);
+				Venue venue = null;
+				for (Event event : scheduler) {
+					if (event.getEmployee().equals(employee)) {
+						venue = event.getVenue();
+					}
+				}
+				if (venue != null)
+					data[i][fillDays] = venue.getID();
+				else
+					data[i][fillDays] = "";
+			}
+			data[i][0] = empList.get(i);
+		}
+		return data;
+	}
+	
 }

@@ -24,19 +24,16 @@ public class Viewer extends JFrame implements ActionListener {
 	private static JMenuItem addEmployee, removeEmployee, updateEmployee, searchEmployee, addVenue, removeVenue,
 			updateVenue, searchVenue, saveFile, refreshTable, addBlacklisted, searchBlacklistedEmployee;
 
-	JTextField whatToUpdateField; // = new JTextField(25);
-	JTextField updateField;// = new JTextField(25);
-	JTextField updateIDField;// = new JTextField(25);
+	JTextField whatToUpdateField, updateField, updateIDField; // = new JTextField(25);
 	JTextField addID, addFName, addLName, addPassword, addPhone, addEmail, addVenAddress, addVenName, addVenTables,
 			addEID, addVID;
 	JMenuBar menuBar;
 	JMenu empMenu, venMenu, fileMenu, blackListMenu;
-	DefaultTableModel tableModel;
+	DefaultTableModel tableModel, model;
 	Scheduler generateSchedule = new Scheduler();
 	ArrayList<Event> scheduler;
 	Object[][] data;
 	String inputID;
-	DefaultTableModel model;
 	Employee employee;
 	ArrayList<Employee> empList;
 
@@ -63,48 +60,30 @@ public class Viewer extends JFrame implements ActionListener {
 		fileMenu = new JMenu("File");
 		blackListMenu = new JMenu("Blacklist");
 		JPanel panel = new JPanel();
+		Object[] colDays = { "Name", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+		ArrayList<ArrayList<Event>> schedulerList = new ArrayList<ArrayList<Event>>();
 
 		empList = new ArrayList<Employee>();
 
 		// Get employee data and stores into a list. Sets look and feel to
-		// Nimbus. This can be changed if we don't like it.
+		// SeaGlass. This can be changed if we don't like it.
 		try {
 			empList = Database.getEmployees();
 			UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
 
 		} catch (Exception e) {
-			// If Nimbus is not available, you can set the GUI to another look
+			// If SeaGlass is not available, you can set the GUI to another look
 			// and feel.
 		}
-
-		// Initializes array row length to total employee size from database.
-		// Columns set to
-		Object[] colDays = { "Name", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+		
 		data = new Object[empList.size()][colDays.length];
-		// Sets data in each of the data Object's cells
-		ArrayList<ArrayList<Event>> schedulerList = new ArrayList<ArrayList<Event>>();
-		for (int i = 0; i < colDays.length; i++) {
-			scheduler = generateSchedule.scheduleGenerator();
-			schedulerList.add(scheduler);
-		}
-		for (int i = 0; i < empList.size(); i++) { // empList.size()
-			Employee employee = empList.get(i);
-
-			for (int fillDays = 0; fillDays < colDays.length; fillDays++) {
-				scheduler = schedulerList.get(fillDays);
-				Venue venue = null;
-				for (Event event : scheduler) {
-					if (event.getEmployee().equals(employee)) {
-						venue = event.getVenue();
-					}
-				}
-				if (venue != null)
-					data[i][fillDays] = venue.getID();
-				else
-					data[i][fillDays] = "";
-			}
-			data[i][0] = empList.get(i);
-		}
+		// Creates an Event List called schedulerList and calls generateWeek from the Scheduler class that makes a list of matched venues and employees.
+		schedulerList = generateSchedule.generateWeek(schedulerList,colDays);
+		
+		
+		
+		// Creates the schedule by calling fillSchedule from the Scheduler class
+		data = generateSchedule.fillSchedule(empList, colDays, schedulerList, data);
 
 		model = new DefaultTableModel(data, colDays);
 		table = new JTable(model);
@@ -249,6 +228,7 @@ public class Viewer extends JFrame implements ActionListener {
 		add(panel, BorderLayout.CENTER);
 
 	}
+
 
 	/**
 	 * Overrides actionPerformed to allow easier action listeners for all menu

@@ -12,11 +12,11 @@ import java.util.ArrayList;
  */
 public final class Database {
 	// Data needed to access server and database
-	private final static String domain = "65.184.201.211";
+	private final static String domain = "127.0.0.1";
 	private final static String port = "3306";
-	private final static String database_name = "csc450";
-	private final static String sql_username = "ctd";
-	private final static String sql_passwd = "eG*OSrpn4NZy";
+	private final static String database_name = "workschedule";
+	private final static String sql_username = "root";
+	private final static String sql_passwd = "root";
 
 	private static Connection connection;
 	private static Statement statement;
