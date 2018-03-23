@@ -14,7 +14,7 @@ public final class Database {
 	// Data needed to access server and database
 	private final static String domain = "127.0.0.1";
 	private final static String port = "3306";
-	private final static String database_name = "workschedule";
+	private final static String database_name = "schedule";
 	private final static String sql_username = "root";
 	private final static String sql_passwd = "root";
 
@@ -606,7 +606,59 @@ public final class Database {
 			close();
 		}
 	}
+	public boolean validateLogin(String id, String password) throws Exception{
+		String DBPassword = null; 
+		try {
+			/* Open connection to the database */
+			connect();
 
+			/* Executes query */
+			preparedStatement = connection.prepareStatement("select password from employee where employeeID=?");
+			preparedStatement.setString(1, id);
+
+			ResultSet rs=preparedStatement.executeQuery();
+			if (rs.next()){
+				DBPassword=rs.getString(1);
+			}
+			close();
+			if (DBPassword.equals(password)){
+				return true;
+			}
+			else{
+				return false;
+			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			/* Close connection to the database */
+			
+		}
+		
+	}
+	public boolean isManager(String id) throws Exception{
+		Boolean boolIsManager=false;
+		try {
+			/* Open connection to the database */
+			connect();
+
+			/* Executes query */
+			preparedStatement = connection.prepareStatement("select isManager from employee where employeeID=?");
+			preparedStatement.setString(1, id);
+
+			ResultSet rs=preparedStatement.executeQuery();
+			if (rs.next()){
+				boolIsManager=rs.getBoolean(1);
+			}
+			close();
+			return boolIsManager;
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			/* Close connection to the database */
+			
+		}
+		
+	}
 	// Connection functions
 	/* Opens a connection to the database */
 	private static void connect() throws Exception {
