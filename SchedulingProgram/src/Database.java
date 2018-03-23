@@ -1,6 +1,8 @@
 import java.sql.*;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 // based on www.vogella.com/tutorials/MySQLJava/article.html
 
 /**
@@ -606,6 +608,7 @@ public final class Database {
 			close();
 		}
 	}
+	
 	public boolean validateLogin(String id, String password) throws Exception{
 		String DBPassword = null; 
 		try {
@@ -613,12 +616,23 @@ public final class Database {
 			connect();
 
 			/* Executes query */
+			PreparedStatement ps2 =connection.prepareStatement("select count(*) from employee where employeeID=?");
+			ps2.setString(1,id);
+			ResultSet rs2 = ps2.executeQuery();
+			if(rs2.next()){
+				if(rs2.getInt(1) <=0){
+				return false;
+				}
+				
+			}
+			
 			preparedStatement = connection.prepareStatement("select password from employee where employeeID=?");
 			preparedStatement.setString(1, id);
 
 			ResultSet rs=preparedStatement.executeQuery();
 			if (rs.next()){
 				DBPassword=rs.getString(1);
+				
 			}
 			close();
 			if (DBPassword.equals(password)){

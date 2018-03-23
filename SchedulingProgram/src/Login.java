@@ -26,10 +26,15 @@ public class Login extends JFrame {
 						Viewer viewer = new Viewer(isManager);
 
 						viewer.setVisible(true);
+						viewer.setSize(500,500);
 						dispose();
 					}
 					else{
 						
+						JOptionPane.showMessageDialog(null, "The login info you entered was incorrect");
+						usernameTextField.setText("");
+						passwordTextField.setText("");
+						usernameTextField.grabFocus();
 					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block

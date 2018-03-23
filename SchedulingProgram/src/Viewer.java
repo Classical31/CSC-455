@@ -22,7 +22,7 @@ import javax.swing.*;
  */
 public class Viewer extends JFrame implements ActionListener {
 	private static JMenuItem addEmployee, removeEmployee, updateEmployee, searchEmployee, addVenue, removeVenue,
-			updateVenue, searchVenue, saveFile, refreshTable, addBlacklisted, searchBlacklistedEmployee;
+			updateVenue, searchVenue, saveFile, refreshTable, addBlacklisted, searchBlacklistedEmployee,createSchedule;
 
 	JTextField whatToUpdateField, updateField, updateIDField; // = new JTextField(25);
 	JTextField addID, addFName, addLName, addPassword, addPhone, addEmail, addVenAddress, addVenName, addVenTables,
@@ -84,13 +84,17 @@ public class Viewer extends JFrame implements ActionListener {
 		fileMenu.add(refreshTable);
 		fileMenu.add(saveFile);
 		
-
+		//Manager functions
+		createSchedule = new JMenuItem("Create Schedule");
 		// Add Employee Menu Items to the Employee Menu
 		empMenu.add(searchEmployee);
 		empMenu.add(updateEmployee);
 		empMenu.add(addEmployee);
 		empMenu.add(removeEmployee);
 
+		//Manager Menu Items
+		managerMenu.add(createSchedule);
+		
 		// Add Venue Menu Items to the Employee Menu
 		venMenu.add(searchVenue);
 		venMenu.add(updateVenue);
@@ -120,6 +124,18 @@ public class Viewer extends JFrame implements ActionListener {
 
 		addBlacklisted.addActionListener(this);
 		searchBlacklistedEmployee.addActionListener(this);
+		
+		createSchedule.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				add(doSchedule());
+				
+			}
+			
+		});
+		
+		
 		setJMenuBar(menuBar);
 		//add(doSchedule());
 		
