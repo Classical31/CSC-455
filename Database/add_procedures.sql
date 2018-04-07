@@ -1,3 +1,5 @@
+use schedule;
+
 drop procedure if exists GetTable;
 
 drop procedure if exists GetEmployeeInfo;
@@ -7,6 +9,7 @@ drop procedure if exists UpdateManager;
 drop procedure if exists SearchEmployee;
 drop procedure if exists SearchEmployeeID;
 drop procedure if exists RemoveEmployee;
+drop procedure if exists viewEmployee;
 
 drop procedure if exists GetVenueInfo;
 drop procedure if exists AddVenue;

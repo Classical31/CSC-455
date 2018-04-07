@@ -99,7 +99,7 @@ public class Scheduler {
 				scheduler = schedulerList.get(fillDays);
 				Venue venue = null;
 				for (Event event : scheduler) {
-					if (event.getEmployee().equals(employee)) {
+					if (event.getEmployee().getId().equals(employee.getId())) {
 						venue = event.getVenue();
 					}
 				}

@@ -228,23 +228,6 @@ public class Viewer extends JFrame implements ActionListener {
 		// SCROLLPANE,SET SZE,SET CLOSE OPERATION
 		JScrollPane pane = new JScrollPane(table);
 
-		// Any and all things related to the swing components being attached to
-		// the frame
-
-		// File Menu Items
-		
-
-		// Add Blacklist Menu Items to the Blacklist Menu
-
-		
-
-		// Action Listeners for different Menu Items
-
-		
-
-		// Add Menus to the Menu Bar
-		
-
 		// Adds the JTable with the Scroll pane to a Panel so Menus can be
 		// displayed on the Frame
 		panel.setLayout(new BorderLayout());
@@ -295,7 +278,11 @@ public class Viewer extends JFrame implements ActionListener {
 
 		// Actions for Employee Menu Items
 		if (menuItem.getSource().equals(searchEmployee)) {
-
+			
+			
+			/*
+			 * Input some check for manager to distinguish different views in database?
+			 */
 			inputID = JOptionPane.showInputDialog("Enter a Employee ID: ");
 
 			try {

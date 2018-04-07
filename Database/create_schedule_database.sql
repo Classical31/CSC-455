@@ -1,3 +1,5 @@
+use schedule;
+
 /*Drop tables*/
 drop table if exists scheduled;
 drop table if exists blacklist;

@@ -259,6 +259,26 @@ public final class Database {
 			close();
 		}
 	}
+	
+	public static void viewEmployee(String id, Boolean isManager) throws Exception {
+		try {
+			connect();
+			if(isManager == false){
+				
+			preparedStatement = connection.prepareStatement("create view employeeView as select fName, lName, phone from employee where employeeID = ?;");
+			preparedStatement.setString(0, id);
+			resultSet = preparedStatement.executeQuery();
+			}else{
+				preparedStatement = connection.prepareStatement("create view as employeeViewAsManager as select fName, lName, phone, email from employee where employeeID = ?;");
+				preparedStatement.setString(0, id);
+				resultSet = preparedStatement.executeQuery();
+			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			close();
+		}
+	}
 
 	// Venue functions
 	/*
