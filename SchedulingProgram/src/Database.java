@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
@@ -21,10 +22,14 @@ public final class Database {
 	private final static String sql_passwd = "root";
 
 	private static Connection connection;
+	
 	private static Statement statement;
 	private static PreparedStatement preparedStatement;
 	private static ResultSet resultSet;
 
+	public Connection getConnection(){
+		return connection;
+	}
 	// Employee functions
 	/*
 	 * Connects to the database and generates an array list of all the employees
@@ -628,7 +633,39 @@ public final class Database {
 			close();
 		}
 	}
+	public static boolean validateUserID(String id) throws Exception{ 
+		try {
+			/* Open connection to the database */
+			connect();
+
+			/* Executes query */
+			PreparedStatement ps2 =connection.prepareStatement("select count(*) from employee where employeeID=?");
+			ps2.setString(1,id);
+			ResultSet rs2 = ps2.executeQuery();
+		
+			if(rs2.next()){
+				if(rs2.getInt(1) <=0){
+					close();
+				return false;
+				}
+				
+			}
+			else{
+				close();
+				return true;
+			}
+		}
+			catch (Exception e) {
+				throw e;
+		}
+		return true;
+		
 	
+			
+		
+			
+		
+	}
 	public boolean validateLogin(String id, String password) throws Exception{
 		String DBPassword = null; 
 		try {
@@ -669,12 +706,82 @@ public final class Database {
 		}
 		
 	}
+	public static void updateSalary(String id, int salary) throws Exception{
+		connect();
+		preparedStatement = connection.prepareStatement("call updateSalary(?,?)");
+		try {
+			preparedStatement.setString(1, id);
+			preparedStatement.setLong(2, salary);
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		close();
+		
+	}
+	public static int getCurrentSalary(String id) throws Exception{
+		int currentSalary = 0;
+		try {
+			/* Open connection to the database */
+			connect();
+
+			/* Executes query */
+			preparedStatement = connection.prepareStatement("select salary from salary where employeeID=?");
+			preparedStatement.setString(1, id);
+
+			ResultSet rs=preparedStatement.executeQuery();
+			if (rs.next()){
+				currentSalary = rs.getInt(1);
+			}
+			close();
+			return currentSalary;
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			/* Close connection to the database */
+			
+		}
+		
+		
+		}
+	public void createScheduleInDB(String id, LocalDate date) throws Exception{
+		try{
+			
+			preparedStatement = connection.prepareStatement("call createNewSchedule(?,?)");
+			preparedStatement.setString(1,id);
+			preparedStatement.setObject(2, date);
+			preparedStatement.executeUpdate();
+			
+		}
+		catch(Exception e){
+			throw e;
+		}
+	}
+	public void insertIntoSchedule(String id,String weekday,String ven,LocalDate date) throws Exception{
+		try{
+			
+			connection.setAutoCommit(false);
+			preparedStatement = connection.prepareStatement("call insertSchedule(?,?,?,?)");
+			preparedStatement.setString(1,id);
+			preparedStatement.setString(2, weekday);
+			preparedStatement.setString(3, ven);
+			preparedStatement.setObject(4, date);
+			preparedStatement.executeUpdate();
+			
+		}
+		catch(Exception e){
+			throw e;
+		}
+	}
+		
+	
 	public boolean isManager(String id) throws Exception{
 		Boolean boolIsManager=false;
 		try {
 			/* Open connection to the database */
 			connect();
-
+			
 			/* Executes query */
 			preparedStatement = connection.prepareStatement("select isManager from employee where employeeID=?");
 			preparedStatement.setString(1, id);
@@ -684,6 +791,7 @@ public final class Database {
 				boolIsManager=rs.getBoolean(1);
 			}
 			close();
+			System.out.print(boolIsManager);
 			return boolIsManager;
 		} catch (Exception e) {
 			throw e;
@@ -695,7 +803,7 @@ public final class Database {
 	}
 	// Connection functions
 	/* Opens a connection to the database */
-	private static void connect() throws Exception {
+	static void connect() throws Exception {
 		try {
 			// load MySql driver
 			Class.forName("com.mysql.jdbc.Driver");
@@ -709,7 +817,7 @@ public final class Database {
 	}
 
 	/* Closes the connection to the database */
-	private static void close() {
+	static void close() {
 		try {
 			if (resultSet != null)
 				resultSet.close();

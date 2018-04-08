@@ -1,5 +1,9 @@
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Random;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 
 /**
  * 
@@ -45,7 +49,7 @@ public class Scheduler {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public ArrayList<Event> scheduleGenerator() {
 		/**
 		 * Generates one day's worth of scheduling, adding employees to all

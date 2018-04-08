@@ -3,6 +3,8 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -22,7 +24,7 @@ import javax.swing.*;
  */
 public class Viewer extends JFrame implements ActionListener {
 	private static JMenuItem addEmployee, removeEmployee, updateEmployee, searchEmployee, addVenue, removeVenue,
-			updateVenue, searchVenue, saveFile, refreshTable, addBlacklisted, searchBlacklistedEmployee,createSchedule;
+			updateVenue, searchVenue, saveFile, refreshTable, addBlacklisted, searchBlacklistedEmployee,createSchedule,updateSalary;
 
 	JTextField whatToUpdateField, updateField, updateIDField; // = new JTextField(25);
 	JTextField addID, addFName, addLName, addPassword, addPhone, addEmail, addVenAddress, addVenName, addVenTables,
@@ -86,6 +88,8 @@ public class Viewer extends JFrame implements ActionListener {
 		
 		//Manager functions
 		createSchedule = new JMenuItem("Create Schedule");
+		updateSalary = new JMenuItem("update salary");
+		
 		// Add Employee Menu Items to the Employee Menu
 		empMenu.add(searchEmployee);
 		empMenu.add(updateEmployee);
@@ -94,6 +98,7 @@ public class Viewer extends JFrame implements ActionListener {
 
 		//Manager Menu Items
 		managerMenu.add(createSchedule);
+		managerMenu.add(updateSalary);
 		
 		// Add Venue Menu Items to the Employee Menu
 		venMenu.add(searchVenue);
@@ -116,6 +121,7 @@ public class Viewer extends JFrame implements ActionListener {
 		removeEmployee.addActionListener(this);
 		updateEmployee.addActionListener(this);
 		searchEmployee.addActionListener(this);
+		
 
 		addVenue.addActionListener(this);
 		removeVenue.addActionListener(this);
@@ -123,17 +129,10 @@ public class Viewer extends JFrame implements ActionListener {
 		searchVenue.addActionListener(this);
 
 		addBlacklisted.addActionListener(this);
+		updateSalary.addActionListener(this);
 		searchBlacklistedEmployee.addActionListener(this);
+		createSchedule.addActionListener(this);
 		
-		createSchedule.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				add(doSchedule());
-				
-			}
-			
-		});
 		
 		
 		setJMenuBar(menuBar);
@@ -141,7 +140,16 @@ public class Viewer extends JFrame implements ActionListener {
 		
 		
 	}
-	public JPanel doSchedule(){
+	public static LocalDate getWeekStart(){
+		LocalDate today =LocalDate.now();
+		LocalDate sunday = today;
+		 while (sunday.getDayOfWeek() != DayOfWeek.SUNDAY) {
+		      sunday = sunday.minusDays(1);
+		    }
+		 return sunday;
+	}
+	@SuppressWarnings("static-access")
+	public JPanel doSchedule() throws Exception{
 		TableColumn columnModel;
 		
 		JPanel panel = new JPanel();
@@ -169,7 +177,38 @@ public class Viewer extends JFrame implements ActionListener {
 		
 		// Creates the schedule by calling fillSchedule from the Scheduler class
 		data = generateSchedule.fillSchedule(empList, colDays, schedulerList, data);
-
+		LocalDate weekof = getWeekStart();
+		String[] days = {"","sun","mon","tues","wed","thurs","fri","sat"};
+		Database db = new Database();
+		try{
+			db.connect();
+			
+			(db.getConnection()).setAutoCommit(false);
+		for(int i =0; i<data.length;i++){
+			for(int j=0;j<data[i].length;j++){
+				Employee id =  (Employee) data[i][0];
+				
+				if (j==0){
+					//create the schedule for the that person
+					
+					db.createScheduleInDB(id.getId(), weekof);
+					
+				}
+				else{
+				
+					String myString = "'"+(String)data[i][j]+"'";
+					db.insertIntoSchedule(id.getId(), days[j], myString, weekof);
+				}
+				
+			}
+		}
+		}
+		catch(Exception e){
+			db.getConnection().rollback();
+		}
+		db.getConnection().commit();
+		db.close();
+		
 		model = new DefaultTableModel(data, colDays);
 		table = new JTable(model);
 		// create new table with an overriden tooltip
@@ -301,6 +340,50 @@ public class Viewer extends JFrame implements ActionListener {
 				e.printStackTrace();
 			}
 		}
+		if (menuItem.getSource().equals(updateSalary)){
+			
+		
+			
+			String newSalary = null;
+		
+			try {
+				Boolean isValidUser = false;
+				while (!isValidUser){
+				 inputID = JOptionPane.showInputDialog("Enter the EmployeeID to update: ");
+				 if (Database.validateUserID(inputID)){
+					 isValidUser =true;
+					 
+				 }
+				 
+					
+				}
+				
+					
+					int currentSalary =Database.getCurrentSalary(inputID);
+					Boolean validInput = false;
+					while (!validInput){
+					newSalary = JOptionPane.showInputDialog("The Employee " + inputID +"has a current salary of: " + Integer.toString(currentSalary));
+					if (newSalary.matches("[0-9]+")){
+						validInput=true;
+					}
+					
+					}
+					
+					Database.updateSalary(inputID,Integer.parseInt(newSalary));
+				
+				}
+					
+				
+				
+			catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			
+		}
+		
 
 		if (menuItem.getSource().equals(addEmployee)) {
 			addID = new JTextField(10);
@@ -454,7 +537,16 @@ public class Viewer extends JFrame implements ActionListener {
 			System.out.println("Search Blacklisted");
 
 		}
+		if (menuItem.getSource().equals(createSchedule)){
+			try {
+				add(doSchedule());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
+	
 
 	/**
 	 * 
@@ -575,6 +667,7 @@ public class Viewer extends JFrame implements ActionListener {
 					"Update Venue Error", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
+
 
 }
 
