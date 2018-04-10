@@ -20,6 +20,6 @@
 *.rar
 /bin/
 
-.gitignore
+
 .classpath
 .project
