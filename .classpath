@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="SchedulingProgram/src"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Bobby/git/CSC-455/Apache Files/poi-3.9/dom4j-1.6.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Bobby/git/CSC-455/Apache Files/poi-3.9/poi-3.9-20121203.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Bobby/git/CSC-455/Apache Files/poi-3.9/poi-ooxml-3.9-20121203.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Bobby/git/CSC-455/Apache Files/poi-3.9/poi-ooxml-schemas-3.9-20121203.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Bobby/git/CSC-455/Apache Files/poi-3.9/xmlbeans-2.3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Bobby/git/CSC-455/lib/mysql-connector-java-5.1.44/mysql-connector-java-5.1.44-bin.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Bobby/git/CSC-455/LookAndFeel/seaglasslookandfeel-0.2.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Bobby/git/CSC-455/SchedulingProgram/mysql-connector-java-5.1.44/mysql-connector-java-5.1.44-bin.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
++	<classpathentry kind="lib" path="LookAndFeel/seaglasslookandfeel-0.2.1.jar"/>
++	<classpathentry kind="lib" path="Apache Files/dom4j-1.6.1.jar"/>
++	<classpathentry kind="lib" path="Apache Files/poi-3.9/poi-3.9-20121203.jar"/>
++	<classpathentry kind="lib" path="Apache Files/poi-3.9/poi-ooxml-3.9-20121203.jar"/>
++	<classpathentry kind="lib" path="Apache Files/poi-3.9/poi-ooxml-schemas-3.9-20121203.jar"/>
++	<classpathentry kind="lib" path="Apache Files/poi-3.9/xmlbeans-2.3.0.jar"/>
++	<classpathentry kind="lib" path="mysql-connector-java-5.1.44-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

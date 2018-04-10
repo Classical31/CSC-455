@@ -190,7 +190,7 @@ public class Viewer extends JFrame implements ActionListener {
 				
 				if (j==0){
 					//create the schedule for the that person
-					
+					//add new comment
 					db.createScheduleInDB(id.getId(), weekof);
 					
 				}
