@@ -195,9 +195,9 @@ public class Viewer extends JFrame implements ActionListener {
 					
 				}
 				else{
-					System.out.println(data[i][j]==null);
+					//System.out.println(data[i][j]==null);
 					String myString = "'"+(String)data[i][j]+"'";
-					System.out.println(myString);
+					//System.out.println(myString);
 					if (myString.equals("''")){
 						
 						myString = "'#'";
