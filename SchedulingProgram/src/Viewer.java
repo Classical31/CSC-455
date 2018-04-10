@@ -195,12 +195,14 @@ public class Viewer extends JFrame implements ActionListener {
 					
 				}
 				else{
-				
+					System.out.println(data[i][j]==null);
 					String myString = "'"+(String)data[i][j]+"'";
-					if (myString == "''"){
+					System.out.println(myString);
+					if (myString.equals("''")){
+						
 						myString = "'#'";
 					}
-				
+					//System.out.println(myString);
 					db.insertIntoSchedule(id.getId(), days[j], myString, weekof);
 				}
 				
@@ -208,6 +210,7 @@ public class Viewer extends JFrame implements ActionListener {
 		}
 		}
 		catch(Exception e){
+			System.out.println(e.toString());
 			db.getConnection().rollback();
 		}
 		db.getConnection().commit();
