@@ -197,6 +197,10 @@ public class Viewer extends JFrame implements ActionListener {
 				else{
 				
 					String myString = "'"+(String)data[i][j]+"'";
+					if (myString == "''"){
+						myString = "'#'";
+					}
+				
 					db.insertIntoSchedule(id.getId(), days[j], myString, weekof);
 				}
 				
