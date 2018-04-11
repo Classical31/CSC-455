@@ -8,6 +8,7 @@ public class Login extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	static boolean isManager;
 
 	public Login() {
 		JPanel loginPanel = new JPanel();
@@ -22,7 +23,7 @@ public class Login extends JFrame {
 				Database db= new Database();
 				try {
 					if (db.validateLogin(usernameTextField.getText(), passwordTextField.getText())){
-						Boolean isManager = db.isManager(usernameTextField.getText());
+						isManager = db.isManager(usernameTextField.getText());
 						Viewer viewer = new Viewer(isManager);
 
 						viewer.setVisible(true);
@@ -40,9 +41,9 @@ public class Login extends JFrame {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 			}
-			
+
 		});
 		
 		
@@ -53,9 +54,9 @@ public class Login extends JFrame {
 		loginPanel.add(loginButton);
 		add(loginPanel);
 		setSize(1280, 720);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		
 		
 	}
-
 }

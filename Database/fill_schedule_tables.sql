@@ -3,6 +3,11 @@ use schedule;
 /*Clear tables*/
 delete from employee;
 delete from venue;
+delete from work_history;
+delete from salary;
+delete from venue_emp_rating;
+delete from request_off;
+delete from swap_request;
 
 /*Insert data into employee table*/
 insert into employee values("13881", "Malin", "Kraft", "password01", "pho-num-0001", "email01@domain.com", "1");
@@ -49,6 +54,7 @@ insert into employee values("917061", "Josefina", "Wiklund", "password40", "pho-
 insert into employee values("917063", "Emmie", "Hansson", "password41", "pho-num-0041", "email41@domain.com", "0");
 
 /*Insert data into venue table*/
+insert into venue values("#", "Day Off", 0, "");
 insert into venue values("BD", "El Barco", 2, "address01");
 insert into venue values("BO", "Bordet", 1, "address02");
 insert into venue values("DD", "DD", 1, "address03");
@@ -68,3 +74,86 @@ insert into venue values("SH", "Steakhouse Goteburg", 1, "address16");
 insert into venue values("TR", "Tradgar'n Goteborg", 2, "address17");
 insert into venue values("VB", "Vasa Bar", 1, "address18");
 insert into venue values("VI", "Viiva", 1, "address19");
+
+/*Insert data into work_history table */
+insert into work_history values('17128','2018-08-08','LA','EC','RB','RA','EX','RB','DD');
+insert into work_history values('17038','2018-08-08','VI','TR','BD','EC','KB','OP','KB');
+insert into work_history values('17094','2018-08-08','OP','FS','JP','VB','HB','SH','BD');
+insert into work_history values('817086','2018-08-08','HR','HR','VB','DU','TR','DD','EC');
+insert into work_history values('17005','2018-08-08','VB','TR','DD','RB','HR','BO','DD');
+insert into work_history values('13881','2018-08-08','HR','BD','LA','RA','EX','VB','BD');
+insert into work_history values('17057','2018-08-08','DD','BO','VI','TR','VB','SH','RA');
+
+/*Insert data into salary table */
+insert into salary values('17084',1936);
+insert into salary values('817086',14027);
+insert into salary values('17134',16499);
+insert into salary values('17130',69516);
+insert into salary values('17136',35201);
+insert into salary values('17088',38907);
+insert into salary values('17041',55260);
+insert into salary values('17139',63258);
+insert into salary values('817042',72908);
+insert into salary values('17037',6395);
+insert into salary values('17057',25413);
+insert into salary values('17129',43334);
+insert into salary values('917063',18538);
+insert into salary values('917063',17847);
+insert into salary values('17146',31858);
+insert into salary values('17041',78852);
+insert into salary values('17121',49326);
+insert into salary values('17108',13310);
+insert into salary values('17121',4712);
+insert into salary values('17139',55625);
+insert into salary values('17038',36449);
+insert into salary values('17000',25450);
+insert into salary values('817086',20226);
+insert into salary values('17084',44804);
+insert into salary values('17146',90);
+insert into salary values('817003',883);
+insert into salary values('17146',60321);
+insert into salary values('17014',1208);
+insert into salary values('17041',8587);
+insert into salary values('17005',71377);
+insert into salary values('17132',4293);
+insert into salary values('17126',76022);
+insert into salary values('17131',57644);
+insert into salary values('17145',47385);
+insert into salary values('17094',52384);
+insert into salary values('17000',4698);
+insert into salary values('817042',76679);
+insert into salary values('17126',65969);
+insert into salary values('17000',37037);
+insert into salary values('817086',43393);
+insert into salary values('17000',64062);
+
+/*Insert data into venue_emp_rating table */
+insert into venue_emp_rating values('OP','17129','10');
+insert into venue_emp_rating values('HB','817042','6');
+insert into venue_emp_rating values('LA','17005','9');
+insert into venue_emp_rating values('BD','13881','7');
+insert into venue_emp_rating values('HR','17038','5');
+insert into venue_emp_rating values('JP','17142','5');
+insert into venue_emp_rating values('RB','17094','8');
+insert into venue_emp_rating values('OP','17100','6');
+
+/*Insert data into request_off table */
+insert into request_off values('17130','2018-4-7',True,'17146');
+insert into request_off values('17129','2018-3-9',True,'17005');
+insert into request_off values('13881','2018-10-8',False,null);
+insert into request_off values('917061','2018-9-11',False,null);
+insert into request_off values('17094','2018-10-6',True,'17131');
+insert into request_off values('17128','2018-3-9',False,null);
+insert into request_off values('17134','2018-3-7',False,null);
+insert into request_off values('817003','2018-4-9',True,'17035');
+
+/* Insert data into swap_request */
+
+insert into swap_request values('17121','2018-4-6','2018-2-11','KB','17143',False,False,null);
+insert into swap_request values('17000','2018-11-12','2018-2-12','BO','817003',False,False,null);
+insert into swap_request values('17142','2018-8-11','2018-3-5','HR','13881',True,True,'17014');
+insert into swap_request values('17038','2018-6-2','2018-5-7','SH','17057',True,False,null);
+insert into swap_request values('13881','2018-5-2','2018-3-6','KB','17057',True,True,'17022');
+insert into swap_request values('17129','2018-4-7','2018-2-10','BD','17088',False,True,'917061');
+insert into swap_request values('17128','2018-10-11','2018-12-5','SH','917061',True,True,'917063');
+insert into swap_request values('17128','2018-11-9','2018-9-7','RA','3433020220',True,False,null);

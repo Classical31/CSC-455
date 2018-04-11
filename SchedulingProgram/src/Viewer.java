@@ -54,6 +54,7 @@ public class Viewer extends JFrame implements ActionListener {
 	public Viewer(Boolean isManager) {
 		// FORM TITLE
 		super("Table Schedule View");
+		
 		menuBar = new JMenuBar();
 		empMenu = new JMenu("Employees");
 		venMenu = new JMenu("Venues");
@@ -92,9 +93,6 @@ public class Viewer extends JFrame implements ActionListener {
 		
 		// Add Employee Menu Items to the Employee Menu
 		empMenu.add(searchEmployee);
-		empMenu.add(updateEmployee);
-		empMenu.add(addEmployee);
-		empMenu.add(removeEmployee);
 
 		//Manager Menu Items
 		managerMenu.add(createSchedule);
@@ -102,11 +100,7 @@ public class Viewer extends JFrame implements ActionListener {
 		
 		// Add Venue Menu Items to the Employee Menu
 		venMenu.add(searchVenue);
-		venMenu.add(updateVenue);
-		venMenu.add(addVenue);
-		venMenu.add(removeVenue);
 		blackListMenu.add(searchBlacklistedEmployee);
-		blackListMenu.add(addBlacklisted);
 		menuBar.add(fileMenu);
 		menuBar.add(empMenu);
 		menuBar.add(venMenu);
@@ -114,6 +108,17 @@ public class Viewer extends JFrame implements ActionListener {
 		
 		if (isManager){
 			menuBar.add(managerMenu);
+			
+			venMenu.add(updateVenue);
+			venMenu.add(addVenue);
+			venMenu.add(removeVenue);
+			
+			blackListMenu.add(addBlacklisted);
+			
+			empMenu.add(updateEmployee);
+			empMenu.add(addEmployee);
+			empMenu.add(removeEmployee);
+			
 		}
 		saveFile.addActionListener(this);
 
@@ -329,23 +334,18 @@ public class Viewer extends JFrame implements ActionListener {
 			/*
 			 * Input some check for manager to distinguish different views in database?
 			 */
-			inputID = JOptionPane.showInputDialog("Enter a Employee ID: ");
 
-			try {
-				employee = Database.searchEmployeeID(inputID);
-				if (employee == null) {
-					JOptionPane.showMessageDialog(null, "No employee with that ID was found", "Invaild ID",
-							JOptionPane.INFORMATION_MESSAGE);
-				} else {
-					JOptionPane.showMessageDialog(null,
-							"ID: " + employee.getId().toUpperCase() + "\n" + "Name: " + employee.getFullName() + "\n"
-									+ "Phone: " + employee.getPhone() + "\n" + "Email: " + employee.getEmail(),
-							"Employee Info", JOptionPane.INFORMATION_MESSAGE);
+
+				inputID = JOptionPane.showInputDialog("Enter a Employee ID: ");
+				
+				try {
+					Database.searchEmployeeID(Login.isManager,inputID);
+
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
 		}
 		if (menuItem.getSource().equals(updateSalary)){
 			
@@ -425,26 +425,31 @@ public class Viewer extends JFrame implements ActionListener {
 
 		if (menuItem.getSource().equals(updateEmployee)) {
 			inputID = JOptionPane.showInputDialog("ID for the Employee you would like to update: ");
-
 			try {
 				employee = Database.searchEmployeeID(inputID);
-				addFName = new JTextField(employee.getFirstName());
-				addLName = new JTextField(employee.getLastName());
-				addPassword = new JTextField(employee.getPassword());
-				addPhone = new JTextField(employee.getPhone());
-				addEmail = new JTextField(employee.getEmail());
-			} catch (Exception e) {
+				if(employee != null){
+					addFName = new JTextField(employee.getFirstName());
+					addLName = new JTextField(employee.getLastName());
+					addPassword = new JTextField(employee.getPassword());
+					addPhone = new JTextField(employee.getPhone());
+					addEmail = new JTextField(employee.getEmail());
+					
+					Object[] empInfo = { "First Name: ", addFName, "Last Name: ", addLName, "Choose a Password: ", addPassword,
+							"Phone Number: ", addPhone, "Email: ", addEmail };
+					updateEmployeeInfoBox(empInfo, "Update Employee Information");
+					JOptionPane.showMessageDialog(null,
+							"ID: " + inputID + "\n" + "Name: " + addFName.getText() + " " + addLName.getText() + "\n"
+									+ "Phone: " + addPhone.getText() + "\n" + "Email: " + addEmail.getText(),
+							"Employee Updated", JOptionPane.INFORMATION_MESSAGE);					
+				}else{
+					JOptionPane.showMessageDialog(null, "No Employee with that ID was found", "Invaild ID",
+							JOptionPane.INFORMATION_MESSAGE);
+				}
+			} catch (Exception NullPointer) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
+			
 
-			Object[] empInfo = { "First Name: ", addFName, "Last Name: ", addLName, "Choose a Password: ", addPassword,
-					"Phone Number: ", addPhone, "Email: ", addEmail };
-			updateEmployeeInfoBox(empInfo, "Update Employee Information");
-			JOptionPane.showMessageDialog(null,
-					"ID: " + inputID + "\n" + "Name: " + addFName.getText() + " " + addLName.getText() + "\n"
-							+ "Phone: " + addPhone.getText() + "\n" + "Email: " + addEmail.getText(),
-					"Employee Updated", JOptionPane.INFORMATION_MESSAGE);
 
 		}
 

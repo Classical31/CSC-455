@@ -22,14 +22,16 @@ public final class Database {
 	private final static String sql_passwd = "root";
 
 	private static Connection connection;
-	
+
 	private static Statement statement;
 	private static PreparedStatement preparedStatement;
 	private static ResultSet resultSet;
+	private static boolean isLoginManager;
 
-	public Connection getConnection(){
+	public Connection getConnection() {
 		return connection;
 	}
+
 	// Employee functions
 	/*
 	 * Connects to the database and generates an array list of all the employees
@@ -169,48 +171,12 @@ public final class Database {
 			close();
 		}
 	}
+	
+	
 
 	/*
 	 * Connects to the database and searches for an employee by their full name
 	 * and returns an employee, or null if no employee if found
-	 */
-	public static Employee searchEmployee(String fName, String lName) throws Exception {
-		/* Set employee as null to begin with */
-		Employee employee = null;
-		try {
-			/* Open connection to the database */
-			connect();
-
-			/* Executes query and saves result into result set */
-			preparedStatement = connection.prepareStatement("call SearchEmployee(?, ?);");
-			preparedStatement.setString(1, fName);
-			preparedStatement.setString(2, lName);
-			resultSet = preparedStatement.executeQuery();
-
-			/*
-			 * If an employee if found, create an employee, otherwise keep
-			 * employee as null
-			 */
-			if (resultSet.next() == true) {
-				String eID = resultSet.getString("employeeID");
-				String password = resultSet.getString("password");
-				String phone = resultSet.getString("phone");
-				String email = resultSet.getString("email");
-
-				employee = new Employee(eID, fName, lName, password, phone, email);
-			}
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			/* Close connection to the database */
-			close();
-		}
-		return employee;
-	}
-
-	/*
-	 * Connects to the database and searches for an employee by their ID and
-	 * returns an employee, or null if no employee if found
 	 */
 	public static Employee searchEmployeeID(String eID) throws Exception {
 		/* Set employee as null to begin with */
@@ -228,7 +194,7 @@ public final class Database {
 			 * If an employee if found, create an employee, otherwise keep
 			 * employee as null
 			 */
-			if (resultSet.next() == true) {
+			if (resultSet.next()) {
 				String fName = resultSet.getString("fName");
 				String lName = resultSet.getString("lName");
 				String password = resultSet.getString("password");
@@ -238,12 +204,68 @@ public final class Database {
 				employee = new Employee(eID, fName, lName, password, phone, email);
 			}
 		} catch (Exception e) {
-			throw e;
+			System.out.println(e.toString());
 		} finally {
 			/* Close connection to the database */
 			close();
 		}
 		return employee;
+	}
+
+
+	/*
+	 * Connects to the database and searches for an employee by their ID and
+	 * returns an employee, or null if no employee if found
+	 */
+	public static void searchEmployeeID(boolean isManager, String eID) throws Exception {
+		/* Set employee as null to begin with */
+
+		try {
+			/* Open connection to the database */
+			connect();
+			String myPreparedStatement = null;
+			if(isManager == true){
+				myPreparedStatement = "select * from employee natural join salary where employeeID=?";
+			}else{
+				myPreparedStatement = "select * from empView where employeeID = ?";
+			}
+			/* Executes query and saves result into result set */
+			preparedStatement = connection.prepareStatement(myPreparedStatement);
+			preparedStatement.setString(1, eID);
+			resultSet = preparedStatement.executeQuery();
+
+			/*
+			 * If an employee if found, create an employee, otherwise keep
+			 * employee as null
+			 */
+			if(resultSet.next()){
+			String fName = resultSet.getString("fName");
+			String lName = resultSet.getString("lName");
+			String phone = resultSet.getString("phone");
+			String email = resultSet.getString("email");
+			
+			
+			if(isManager == true){
+				int salary = resultSet.getInt("salary");
+				
+				JOptionPane.showMessageDialog(null,
+						"ID: " + eID + "\n" + "Name: " + fName + " " + lName + "\n"
+								+ "Phone: " + phone + "\n" + "Email: " + email + "\n" + "Salary: " + salary,
+						"Employee Info", JOptionPane.INFORMATION_MESSAGE);
+			}else{
+				JOptionPane.showMessageDialog(null,
+						"ID: " + eID + "\n" + "Name: " + fName + " " + lName + "\n"
+								+ "Phone: " + phone + "\n" + "Email: " + email,
+						"Employee Info", JOptionPane.INFORMATION_MESSAGE);
+			}}
+
+			
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			/* Close connection to the database */
+			close();
+		}
 	}
 
 	/* Connects to the database and removes an employee by their ID */
@@ -261,26 +283,6 @@ public final class Database {
 			throw e;
 		} finally {
 			/* Close connection to the database */
-			close();
-		}
-	}
-	
-	public static void viewEmployee(String id, Boolean isManager) throws Exception {
-		try {
-			connect();
-			if(isManager == false){
-				
-			preparedStatement = connection.prepareStatement("create view employeeView as select fName, lName, phone from employee where employeeID = ?;");
-			preparedStatement.setString(0, id);
-			resultSet = preparedStatement.executeQuery();
-			}else{
-				preparedStatement = connection.prepareStatement("create view as employeeViewAsManager as select fName, lName, phone, email from employee where employeeID = ?;");
-				preparedStatement.setString(0, id);
-				resultSet = preparedStatement.executeQuery();
-			}
-		} catch (Exception e) {
-			throw e;
-		} finally {
 			close();
 		}
 	}
@@ -633,80 +635,75 @@ public final class Database {
 			close();
 		}
 	}
-	public static boolean validateUserID(String id) throws Exception{ 
+
+	public static boolean validateUserID(String id) throws Exception {
 		try {
 			/* Open connection to the database */
 			connect();
 
 			/* Executes query */
-			PreparedStatement ps2 =connection.prepareStatement("select count(*) from employee where employeeID=?");
-			ps2.setString(1,id);
+			PreparedStatement ps2 = connection.prepareStatement("select count(*) from employee where employeeID=?");
+			ps2.setString(1, id);
 			ResultSet rs2 = ps2.executeQuery();
-		
-			if(rs2.next()){
-				if(rs2.getInt(1) <=0){
+
+			if (rs2.next()) {
+				if (rs2.getInt(1) <= 0) {
 					close();
-				return false;
+					return false;
 				}
-				
-			}
-			else{
+
+			} else {
 				close();
 				return true;
 			}
-		}
-			catch (Exception e) {
-				throw e;
+		} catch (Exception e) {
+			throw e;
 		}
 		return true;
-		
-	
-			
-		
-			
-		
+
 	}
-	public boolean validateLogin(String id, String password) throws Exception{
-		String DBPassword = null; 
+
+	public boolean validateLogin(String id, String password) throws Exception {
+		String DBPassword = null;
 		try {
 			/* Open connection to the database */
 			connect();
 
 			/* Executes query */
-			PreparedStatement ps2 =connection.prepareStatement("select count(*) from employee where employeeID=?");
-			ps2.setString(1,id);
+			PreparedStatement ps2 = connection.prepareStatement("select count(*) from employee where employeeID=?");
+			ps2.setString(1, id);
 			ResultSet rs2 = ps2.executeQuery();
-			if(rs2.next()){
-				if(rs2.getInt(1) <=0){
-				return false;
+			if (rs2.next()) {
+				if (rs2.getInt(1) <= 0) {
+					return false;
 				}
-				
+
 			}
-			
+
 			preparedStatement = connection.prepareStatement("select password from employee where employeeID=?");
 			preparedStatement.setString(1, id);
 
-			ResultSet rs=preparedStatement.executeQuery();
-			if (rs.next()){
-				DBPassword=rs.getString(1);
-				
+			ResultSet rs = preparedStatement.executeQuery();
+			if (rs.next()) {
+				DBPassword = rs.getString(1);
+
 			}
 			close();
-			if (DBPassword.equals(password)){
+			if (DBPassword.equals(password)) {
 				return true;
-			}
-			else{
+			} else {
 				return false;
 			}
 		} catch (Exception e) {
 			throw e;
 		} finally {
 			/* Close connection to the database */
-			
+
 		}
-		
+
 	}
-	public static void updateSalary(String id, int salary) throws Exception{
+
+	public static void updateSalary(String id, int salary) throws Exception {
 		connect();
 		preparedStatement = connection.prepareStatement("call updateSalary(?,?)");
 		try {
@@ -718,9 +715,10 @@ public final class Database {
 			e.printStackTrace();
 		}
 		close();
-		
+
 	}
-	public static int getCurrentSalary(String id) throws Exception{
+
+	public static int getCurrentSalary(String id) throws Exception {
 		int currentSalary = 0;
 		try {
 			/* Open connection to the database */
@@ -730,8 +728,8 @@ public final class Database {
 			preparedStatement = connection.prepareStatement("select salary from salary where employeeID=?");
 			preparedStatement.setString(1, id);
 
-			ResultSet rs=preparedStatement.executeQuery();
-			if (rs.next()){
+			ResultSet rs = preparedStatement.executeQuery();
+			if (rs.next()) {
 				currentSalary = rs.getInt(1);
 			}
 			close();
@@ -740,67 +738,65 @@ public final class Database {
 			throw e;
 		} finally {
 			/* Close connection to the database */
-			
+
 		}
-		
-		
-		}
-	public void createScheduleInDB(String id, LocalDate date) throws Exception{
-		try{
-			
+
+	}
+
+	public void createScheduleInDB(String id, LocalDate date) throws Exception {
+		try {
+
 			preparedStatement = connection.prepareStatement("call createNewSchedule(?,?)");
-			preparedStatement.setString(1,id);
+			preparedStatement.setString(1, id);
 			preparedStatement.setObject(2, date);
 			preparedStatement.executeUpdate();
-			
-		}
-		catch(Exception e){
+
+		} catch (Exception e) {
 			throw e;
 		}
 	}
-	public void insertIntoSchedule(String id,String weekday,String ven,LocalDate date) throws Exception{
-		try{
-			
+
+	public void insertIntoSchedule(String id, String weekday, String ven, LocalDate date) throws Exception {
+		try {
+
 			connection.setAutoCommit(false);
 			preparedStatement = connection.prepareStatement("call insertSchedule(?,?,?,?)");
-			preparedStatement.setString(1,id);
+			preparedStatement.setString(1, id);
 			preparedStatement.setString(2, weekday);
 			preparedStatement.setString(3, ven);
 			preparedStatement.setObject(4, date);
 			preparedStatement.executeUpdate();
-			
-		}
-		catch(Exception e){
+
+		} catch (Exception e) {
 			throw e;
 		}
 	}
-		
-	
-	public boolean isManager(String id) throws Exception{
-		Boolean boolIsManager=false;
+
+	public boolean isManager(String id) throws Exception {
+		Boolean boolIsManager = false;
 		try {
 			/* Open connection to the database */
 			connect();
-			
+
 			/* Executes query */
 			preparedStatement = connection.prepareStatement("select isManager from employee where employeeID=?");
 			preparedStatement.setString(1, id);
 
-			ResultSet rs=preparedStatement.executeQuery();
-			if (rs.next()){
-				boolIsManager=rs.getBoolean(1);
+			ResultSet rs = preparedStatement.executeQuery();
+			if (rs.next()) {
+				boolIsManager = rs.getBoolean(1);
 			}
 			close();
-			System.out.print(boolIsManager);
 			return boolIsManager;
 		} catch (Exception e) {
 			throw e;
 		} finally {
 			/* Close connection to the database */
-			
 		}
-		
+
 	}
+
+	public
 	// Connection functions
 	/* Opens a connection to the database */
 	static void connect() throws Exception {
