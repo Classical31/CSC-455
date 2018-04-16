@@ -13,7 +13,7 @@ public class Login extends JFrame {
 	public Login() {
 		JPanel loginPanel = new JPanel();
 		JTextField usernameTextField = new JTextField(20);
-		JTextField passwordTextField = new JTextField(20);
+		JPasswordField passwordTextField = new JPasswordField(20);
 		JButton loginButton = new JButton("login");
 		
 		loginButton.addActionListener(new ActionListener(){
@@ -22,9 +22,10 @@ public class Login extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				Database db= new Database();
 				try {
-					if (db.validateLogin(usernameTextField.getText(), passwordTextField.getText())){
+					String passString = new String(passwordTextField.getPassword());
+					if (db.validateLogin(usernameTextField.getText(), passString)){
 						isManager = db.isManager(usernameTextField.getText());
-						Viewer viewer = new Viewer(isManager);
+						Viewer viewer = new Viewer(isManager,usernameTextField.getText());
 
 						viewer.setVisible(true);
 						viewer.setSize(500,500);

@@ -60,11 +60,32 @@ public class Scheduler {
 		// across all venues.
 		ArrayList<Employee> usedEmployees = (ArrayList<Employee>) employees.clone();
 		events = new ArrayList<Event>();
+		ArrayList<Event> blackList=null;
+		int index=0;
+		try {
+			blackList = Database.getBlackList();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Boolean isBlackList = true;
 		for (int i = 0; i < totalVenueSize.size() && usedEmployees.size() > 0; i++) {
-			int index = randomizer.nextInt(usedEmployees.size());
+			isBlackList=true;
+			while (isBlackList){
+			index = randomizer.nextInt(usedEmployees.size());
 			event = new Event(totalVenueSize.get(i), usedEmployees.get(index));
+			
+			if (!blackList.contains(event)){
+				isBlackList=false;
+				
+			}
+			
+			}
+			// if event in my black array redo it
+			
 			events.add(event);
 			usedEmployees.remove(index);
+		
 		}
 
 		return events;

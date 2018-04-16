@@ -41,6 +41,18 @@ public class Event {
 		/** Gets the current employee.
 		*/
 		return employee;
+		
+	}
+	public Boolean equals(Event e){
+		if (e.getEmployee().getId().equals(getEmployee().getId()) && e.getVenue().getID().equals(getVenue().getID())){
+			return true;
+		}
+		else{
+			return false;
+		}
+		
+		
+		
 	}
 
 

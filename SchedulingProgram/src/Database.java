@@ -1,8 +1,17 @@
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+import com.sun.org.apache.xml.internal.security.utils.JavaUtils;
 
 // based on www.vogella.com/tutorials/MySQLJava/article.html
 
@@ -100,7 +109,168 @@ public final class Database {
 			close();
 		}
 		return info;
+
 	}
+	
+	public static ArrayList<Event> getBlackList() throws Exception{
+		ArrayList<Event> blackList = new ArrayList<Event>();
+		try{
+			connect();
+			preparedStatement=connection.prepareStatement("select * from blacklist");
+			ResultSet rs = preparedStatement.executeQuery();
+			
+			while(rs.next()){
+				String emp =rs.getString(1);
+				Employee e1 = new Employee(emp, null,null, null, null,null);
+				String ven = rs.getString(2);
+				Venue ven1 = new Venue(ven,null,0,null);
+				Event e = new Event(ven1,e1);
+				blackList.add(e);
+				
+				
+			}
+			
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			
+		}
+		finally{
+			close();
+		}
+		
+		return blackList;
+	}
+	public static void fillAllTables(JTable table,String Query) throws Exception{
+		
+		
+		try{
+			connect();
+			Statement stat = connection.createStatement();
+			ResultSet rs = stat.executeQuery(Query);
+			Object[] modelList = new Object[rs.getMetaData().getColumnCount()];
+			for (int i =1;i<=rs.getMetaData().getColumnCount();i++){
+				//System.out.println(rs.getMetaData().getColumnName(i));
+				modelList[i-1]=rs.getMetaData().getColumnName(i);
+				
+						}
+			DefaultTableModel model = new DefaultTableModel(modelList,0);
+			
+			while(rs.next()){
+			Object[] list = new Object[modelList.length];
+			for(int i =0;i<list.length;i++){
+				list[i]=rs.getObject(i+1);
+			}
+			model.addRow(list);
+			}
+			table.setModel(model);
+			table.repaint();
+
+			rs.close();
+			stat.close();
+		
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		finally{
+			close();
+		}
+	}
+	
+
+	
+
+	public static void addRequestOff(String eID, String dateString) throws Exception {
+		try {
+			SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
+			java.util.Date date = format.parse(dateString);
+			java.sql.Date sqlRequestDate = new java.sql.Date(date.getTime());
+
+			connect();
+
+			preparedStatement = connection.prepareStatement("Insert into request_off(employeeID,date_needed_off,isApproved) values(?,?,?);");
+			preparedStatement.setString(1, eID);
+			preparedStatement.setObject(2, sqlRequestDate);
+			preparedStatement.setBoolean(3, false);
+			preparedStatement.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			close();
+		}
+	}
+	
+	public static void addRequestSwap(String eID, String dateString,String day1,String e2ID,String day2) throws Exception {
+		try {
+			SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
+			java.util.Date date = format.parse(dateString);
+			java.sql.Date sqlRequestDate = new java.sql.Date(date.getTime());
+
+			connect();
+
+			preparedStatement = connection.prepareStatement("Insert into swap_request(employeeID,weekOfRequest,dayOf,employee2,dayOf2) values(?,?,?,?,?);");
+			preparedStatement.setString(1, eID);
+			preparedStatement.setObject(2, sqlRequestDate);
+			preparedStatement.setString(3, day1);
+			preparedStatement.setString(4,e2ID);
+			preparedStatement.setString(5, day2);
+			preparedStatement.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			close();
+		}
+	}
+	public static void approveSwapRequest(Integer rID,String eID, boolean isManager,boolean accept) throws Exception{
+		String emp2ID = null;
+		Object employee2Approval=null;
+		try{
+			connect();
+			preparedStatement = connection.prepareStatement("select employee2,employee2Approval from swap_request where ID=?");
+			preparedStatement.setInt(1, rID);
+			ResultSet rs=preparedStatement.executeQuery();
+			
+			if(rs.next()){
+				emp2ID=rs.getString(1);
+				employee2Approval=rs.getObject(2);
+			}
+			
+			if (employee2Approval ==null && emp2ID.equals(eID)){
+				preparedStatement = connection.prepareStatement("update swap_request set employee2Approval=? where ID=?");
+				preparedStatement.setBoolean(1, accept);
+				preparedStatement.setInt(2, rID);
+				preparedStatement.executeUpdate();
+			}
+			else if(employee2Approval !=null && (Boolean)employee2Approval ==true && !(emp2ID.equals(eID)) && isManager){
+				preparedStatement = connection.prepareStatement("update swap_request set managerApr=?,approv_manager=? where ID=?");
+				preparedStatement.setBoolean(1, accept);
+				preparedStatement.setString(2, eID);
+				preparedStatement.setInt(3, rID);
+				preparedStatement.executeUpdate();
+			}
+			else{
+				JOptionPane.showMessageDialog(null, "You are not allowed to approve this request at this time");
+			}
+			
+			/**		 
+			if eID =
+			preparedStatement= connection.prepareStatement("update swap_request update employee2Approval=True");
+			*/
+			
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		finally{
+			
+		}
+	}
+	
 
 	/* Connects to the database and adds a new employee into the database */
 	public static void addEmployee(String eID, String fName, String lName, String password, String phone, String email,
@@ -171,8 +341,6 @@ public final class Database {
 			close();
 		}
 	}
-	
-	
 
 	/*
 	 * Connects to the database and searches for an employee by their full name
@@ -212,7 +380,6 @@ public final class Database {
 		return employee;
 	}
 
-
 	/*
 	 * Connects to the database and searches for an employee by their ID and
 	 * returns an employee, or null if no employee if found
@@ -224,9 +391,9 @@ public final class Database {
 			/* Open connection to the database */
 			connect();
 			String myPreparedStatement = null;
-			if(isManager == true){
+			if (isManager == true) {
 				myPreparedStatement = "select * from employee natural join salary where employeeID=?";
-			}else{
+			} else {
 				myPreparedStatement = "select * from empView where employeeID = ?";
 			}
 			/* Executes query and saves result into result set */
@@ -238,32 +405,57 @@ public final class Database {
 			 * If an employee if found, create an employee, otherwise keep
 			 * employee as null
 			 */
-			if(resultSet.next()){
-			String fName = resultSet.getString("fName");
-			String lName = resultSet.getString("lName");
-			String phone = resultSet.getString("phone");
-			String email = resultSet.getString("email");
-			
-			
-			if(isManager == true){
-				int salary = resultSet.getInt("salary");
-				
-				JOptionPane.showMessageDialog(null,
-						"ID: " + eID + "\n" + "Name: " + fName + " " + lName + "\n"
-								+ "Phone: " + phone + "\n" + "Email: " + email + "\n" + "Salary: " + salary,
-						"Employee Info", JOptionPane.INFORMATION_MESSAGE);
-			}else{
-				JOptionPane.showMessageDialog(null,
-						"ID: " + eID + "\n" + "Name: " + fName + " " + lName + "\n"
-								+ "Phone: " + phone + "\n" + "Email: " + email,
-						"Employee Info", JOptionPane.INFORMATION_MESSAGE);
-			}}
+			if (resultSet.next()) {
+				String fName = resultSet.getString("fName");
+				String lName = resultSet.getString("lName");
+				String phone = resultSet.getString("phone");
+				String email = resultSet.getString("email");
 
-			
+				if (isManager == true) {
+					int salary = resultSet.getInt("salary");
+
+					JOptionPane.showMessageDialog(null,
+							"ID: " + eID + "\n" + "Name: " + fName + " " + lName + "\n" + "Phone: " + phone + "\n"
+									+ "Email: " + email + "\n" + "Salary: " + salary,
+							"Employee Info", JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane
+							.showMessageDialog(null,
+									"ID: " + eID + "\n" + "Name: " + fName + " " + lName + "\n" + "Phone: " + phone
+											+ "\n" + "Email: " + email,
+									"Employee Info", JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+
 		} catch (Exception e) {
 			throw e;
 		} finally {
 			/* Close connection to the database */
+			close();
+		}
+	}
+
+	public static void updateRequestOff(String eID, String dateString, Boolean approved, String manID)
+			throws Exception {
+		try {
+			SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
+			java.util.Date date = format.parse(dateString);
+			java.sql.Date sqlRequestDate = new java.sql.Date(date.getTime());
+			connect();
+			// update request_off set isApproved = TRUE,approv_manager ='13881'
+			// where employeeID ='17000' and date_needed_off='2018-04-30';
+			preparedStatement = connection.prepareStatement(
+					"update request_off set isApproved=?,approv_manager=? where employeeID=? and date_needed_off=?");
+			preparedStatement.setBoolean(1, approved);
+			preparedStatement.setString(2, manID);
+			preparedStatement.setString(3, eID);
+			preparedStatement.setObject(4, sqlRequestDate);
+
+			preparedStatement.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
 			close();
 		}
 	}
@@ -407,8 +599,8 @@ public final class Database {
 	}
 
 	/*
-	 * Connects to the database and searches for a venue by its name and returns
-	 * an venue, or null if no venue if found
+	 * addRequestOff Connects to the database and searches for a venue by its
+	 * name and returns an venue, or null if no venue if found
 	 */
 	public static Venue searchVenue(String name) throws Exception {
 		Venue venue = null;

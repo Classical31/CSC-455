@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +12,8 @@ import java.util.HashMap;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+
+
 import javax.swing.*;
 
 /**
@@ -24,7 +27,8 @@ import javax.swing.*;
  */
 public class Viewer extends JFrame implements ActionListener {
 	private static JMenuItem addEmployee, removeEmployee, updateEmployee, searchEmployee, addVenue, removeVenue,
-			updateVenue, searchVenue, saveFile, refreshTable, addBlacklisted, searchBlacklistedEmployee,createSchedule,updateSalary;
+			updateVenue, searchVenue, saveFile, refreshTable, addBlacklisted, searchBlacklistedEmployee,
+			createSchedule,updateSalary,requestOff,requestSwitch,viewRequestOff,approveRequestOff,approveSwap,viewSwap,viewCurrentSchedule,viewAllSchedules,logout,viewAverageRating;
 
 	JTextField whatToUpdateField, updateField, updateIDField; // = new JTextField(25);
 	JTextField addID, addFName, addLName, addPassword, addPhone, addEmail, addVenAddress, addVenName, addVenTables,
@@ -38,6 +42,9 @@ public class Viewer extends JFrame implements ActionListener {
 	String inputID;
 	Employee employee;
 	ArrayList<Employee> empList;
+	Boolean isManager2;
+	String employeeIDLoggedIn;
+	JPanel myPanel;
 
 	Object[] empInfo, venInfo, blackInfo;
 
@@ -51,10 +58,11 @@ public class Viewer extends JFrame implements ActionListener {
 	 * interactable.
 	 * 
 	 */
-	public Viewer(Boolean isManager) {
+	public Viewer(Boolean isManager,String loggedInID) {
 		// FORM TITLE
-		super("Table Schedule View");
-		
+		super("Logged In:" + loggedInID);
+		employeeIDLoggedIn = loggedInID;
+		isManager2 = isManager;
 		menuBar = new JMenuBar();
 		empMenu = new JMenu("Employees");
 		venMenu = new JMenu("Venues");
@@ -62,8 +70,10 @@ public class Viewer extends JFrame implements ActionListener {
 		blackListMenu = new JMenu("Blacklist");
 		managerMenu = new JMenu("Manager");
 		saveFile = new JMenuItem("Export to Excel");
+		logout = new JMenuItem("Log out");
 		
 		refreshTable = new JMenuItem("Refresh");
+		myPanel = new JPanel();
 		
 
 		// Employee Menu Items
@@ -72,6 +82,15 @@ public class Viewer extends JFrame implements ActionListener {
 		removeEmployee = new JMenuItem("Remove Employee");
 		updateEmployee = new JMenuItem("Update Employee");
 		searchEmployee = new JMenuItem("Search Employee");
+		requestOff = new JMenuItem("Request Off");
+		requestSwitch = new JMenuItem("Request Swtich");
+		viewRequestOff = new JMenuItem("View Request Off");
+		approveSwap = new JMenuItem("Approve Swap");
+		approveRequestOff = new JMenuItem("Approve Request Off");
+		viewSwap = new JMenuItem("view Request Switch");
+		viewCurrentSchedule = new JMenuItem("View Current Schedule");
+		viewAllSchedules = new JMenuItem("View All Schedules");
+		
 
 		// Venue Menu Items
 		addVenue = new JMenuItem("Add Venue");
@@ -86,17 +105,30 @@ public class Viewer extends JFrame implements ActionListener {
 		// Add File Menu Items to the File Menu
 		fileMenu.add(refreshTable);
 		fileMenu.add(saveFile);
+		fileMenu.add(logout);
 		
 		//Manager functions
 		createSchedule = new JMenuItem("Create Schedule");
 		updateSalary = new JMenuItem("update salary");
+		viewAverageRating  = new JMenuItem("View Average Rating");
+		
+		
+		
 		
 		// Add Employee Menu Items to the Employee Menu
 		empMenu.add(searchEmployee);
+		empMenu.add(requestOff);
+		empMenu.add(requestSwitch);
+		empMenu.add(viewRequestOff);
+		empMenu.add(approveSwap);
+		empMenu.add(viewSwap);
+		empMenu.add(viewCurrentSchedule);
+		empMenu.add(viewAllSchedules);
 
 		//Manager Menu Items
 		managerMenu.add(createSchedule);
 		managerMenu.add(updateSalary);
+		managerMenu.add(viewAverageRating);
 		
 		// Add Venue Menu Items to the Employee Menu
 		venMenu.add(searchVenue);
@@ -118,15 +150,18 @@ public class Viewer extends JFrame implements ActionListener {
 			empMenu.add(updateEmployee);
 			empMenu.add(addEmployee);
 			empMenu.add(removeEmployee);
+			empMenu.add(approveRequestOff);
+			
 			
 		}
 		saveFile.addActionListener(this);
-
+		logout.addActionListener(this);
 		addEmployee.addActionListener(this);
 		removeEmployee.addActionListener(this);
 		updateEmployee.addActionListener(this);
 		searchEmployee.addActionListener(this);
-		
+		requestOff.addActionListener(this);
+		requestSwitch.addActionListener(this);
 
 		addVenue.addActionListener(this);
 		removeVenue.addActionListener(this);
@@ -137,14 +172,41 @@ public class Viewer extends JFrame implements ActionListener {
 		updateSalary.addActionListener(this);
 		searchBlacklistedEmployee.addActionListener(this);
 		createSchedule.addActionListener(this);
-		
-		
-		
+		viewRequestOff.addActionListener(this);
+		approveRequestOff.addActionListener(this);
+		approveSwap.addActionListener(this);
+		viewSwap.addActionListener(this);
+		viewCurrentSchedule.addActionListener(this);
+		viewAllSchedules.addActionListener(this);
+		viewAverageRating.addActionListener(this);
 		setJMenuBar(menuBar);
 		//add(doSchedule());
 		
 		
 	}
+	public void putTableInFrame(JTable myTable2,JPanel myPanel){
+		myPanel.removeAll();
+		myTable2.setVisible(true);
+		myTable2.setSize(500,500);
+		myPanel.add(new JScrollPane(myTable2));
+		
+		myPanel.setVisible(true);
+		myPanel.setSize(900, 900);
+		myPanel.revalidate();
+		
+		add(myPanel,BorderLayout.CENTER);
+		repaint();
+		revalidate();
+	}
+	public static LocalDate getNextWeekStart(){
+		LocalDate today =LocalDate.now();
+		LocalDate sunday = today;
+		 while (sunday.getDayOfWeek() != DayOfWeek.SUNDAY) {
+		      sunday = sunday.plusDays(1);
+		    }
+		 return sunday;
+	}
+	
 	public static LocalDate getWeekStart(){
 		LocalDate today =LocalDate.now();
 		LocalDate sunday = today;
@@ -153,6 +215,7 @@ public class Viewer extends JFrame implements ActionListener {
 		    }
 		 return sunday;
 	}
+	
 	@SuppressWarnings("static-access")
 	public JPanel doSchedule() throws Exception{
 		TableColumn columnModel;
@@ -182,7 +245,7 @@ public class Viewer extends JFrame implements ActionListener {
 		
 		// Creates the schedule by calling fillSchedule from the Scheduler class
 		data = generateSchedule.fillSchedule(empList, colDays, schedulerList, data);
-		LocalDate weekof = getWeekStart();
+		LocalDate weekof = getNextWeekStart();
 		String[] days = {"","sun","mon","tues","wed","thurs","fri","sat"};
 		Database db = new Database();
 		try{
@@ -318,7 +381,11 @@ public class Viewer extends JFrame implements ActionListener {
 		if (menuItem.getSource().equals(refreshTable)) {
 
 		}
-
+		if (menuItem.getSource().equals(logout)){
+			Login lg = new Login();
+			lg.setVisible(true);
+			dispose();
+		}
 		if (menuItem.getSource().equals(saveFile)) {
 			String fileName = JOptionPane.showInputDialog("File name:");
 			ExcelExporter ee = new ExcelExporter(fileName);
@@ -328,8 +395,205 @@ public class Viewer extends JFrame implements ActionListener {
 		}
 
 		// Actions for Employee Menu Items
-		if (menuItem.getSource().equals(searchEmployee)) {
+		
+		if(menuItem.getSource().equals(viewSwap)){
 			
+			JTable myTable2 = new JTable();
+			String mySQLString = "";
+			try {
+				if (isManager2){
+					mySQLString = "select * from swap_request";
+				}
+				else{
+					mySQLString="select * from swap_request where employeeID="+"'"+employeeIDLoggedIn +"'";
+				}
+				
+				//System.out.println(myTable2.getSelectedRows().toString());
+				Database.fillAllTables(myTable2,mySQLString);
+				putTableInFrame(myTable2,myPanel);
+				
+			
+		}
+			catch(Exception e){
+				e.printStackTrace();
+			}
+			finally{
+		
+			}
+		}
+		if(menuItem.getSource().equals(viewRequestOff)){
+			
+			
+			JTable myTable2 = new JTable();
+			String mySQLString = "";
+			try {
+				if (isManager2){
+					mySQLString = "select * from request_off";
+				}
+				else{
+					mySQLString="select * from request_off where employeeID="+"'"+employeeIDLoggedIn +"'";
+				}
+				
+				//System.out.println(myTable2.getSelectedRows().toString());
+				Database.fillAllTables(myTable2,mySQLString);
+				putTableInFrame(myTable2,myPanel);
+				
+				
+				//revalidate();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		if(menuItem.getSource().equals(viewCurrentSchedule)){
+			LocalDate weekStart =getWeekStart();
+			JTable myTable2 = new JTable();
+			try {
+				Database.fillAllTables(myTable2, "Select * from work_history where EmployeeID='" + employeeIDLoggedIn+"' and weekof='" + weekStart+"';");
+				putTableInFrame(myTable2,myPanel);
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if(menuItem.getSource().equals(viewAllSchedules)){
+			LocalDate weekStart =getWeekStart();
+			JTable myTable2 = new JTable();
+			myPanel.removeAll();
+			try {
+				Database.fillAllTables(myTable2, "Select * from work_history where EmployeeID='" + employeeIDLoggedIn+"';");
+				putTableInFrame(myTable2,myPanel);
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		if(menuItem.getSource().equals(requestSwitch)){
+			JTextField requestID = new JTextField(15);
+			JTextField date_needed = new JTextField(15);
+			String[] daysOfTheWeek = {"mon","tues","wed","thurs","fri","sat","sun"};
+			@SuppressWarnings("unchecked")
+			JComboBox<String> dayOfWeek = new JComboBox(daysOfTheWeek);
+			JComboBox<String> dayOfWeek2 = new JComboBox(daysOfTheWeek);
+			
+			JTextField venueID = new JTextField(15);
+			JTextField employee2ID = new JTextField(15);
+			
+			Object[] message ={
+					"Enter your ID:",requestID,
+					"week Of", date_needed,
+					"Day of the Week your shift is you want to switch",dayOfWeek,
+					"employee you want to switch with",employee2ID,
+					"Day of the week their shift is ",dayOfWeek2
+			};
+			
+			int option = JOptionPane.showConfirmDialog(null,
+			message, "request swap", JOptionPane.OK_CANCEL_OPTION);
+			
+			if(option == JOptionPane.OK_OPTION){
+				try {
+					Database.addRequestSwap(requestID.getText(), date_needed.getText(), dayOfWeek.getSelectedItem().toString(), employee2ID.getText(), dayOfWeek2.getSelectedItem().toString());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else{
+				
+			}
+		}
+		if (menuItem.getSource().equals(approveSwap)){
+			JTextField requestID = new JTextField();
+			Object[] message={
+					"Enter the ID of the Swap:",requestID
+			};
+			int option = JOptionPane.showConfirmDialog(null,
+					message, "request swap", JOptionPane.YES_NO_CANCEL_OPTION);
+			
+			if(option == JOptionPane.OK_OPTION){
+				try {
+					Database.approveSwapRequest(Integer.parseInt(requestID.getText()), employeeIDLoggedIn, isManager2, true);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else if(option == JOptionPane.NO_OPTION){
+				try{
+					Database.approveSwapRequest(Integer.parseInt(requestID.getText()), employeeIDLoggedIn, isManager2, false);
+				}
+				catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+			else{
+				
+			}
+		}
+		
+		if(menuItem.getSource().equals(approveRequestOff)){
+			JTextField requestID = new JTextField(15);
+			JTextField date_needed = new JTextField(15);
+			
+		Object[] message ={
+					"Enter The ID of the employee:",requestID,
+					"Enter The date they needed",date_needed
+				};
+			
+		int option = JOptionPane.showConfirmDialog(null,
+		message,"request off", JOptionPane.YES_NO_CANCEL_OPTION);
+		
+		if(option == JOptionPane.YES_OPTION){
+			try {
+				Database.updateRequestOff(requestID.getText(),date_needed.getText(),true,employeeIDLoggedIn);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else if(option == JOptionPane.NO_OPTION){
+			try {
+				Database.updateRequestOff(requestID.getText(),date_needed.getText(),false,employeeIDLoggedIn);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		}
+		else{
+			
+		}
+		
+		
+		if (menuItem.getSource().equals(requestOff)){
+			
+			JTextField date_needed = new JTextField(30);
+			Object[] message ={
+				"Enter your date needed",date_needed
+			};
+			int option = JOptionPane.showConfirmDialog(null,
+					 message,"request off", JOptionPane.OK_CANCEL_OPTION);		
+			
+			
+			if (option == JOptionPane.OK_OPTION){
+				try {
+					Database.addRequestOff(employeeIDLoggedIn, date_needed.getText());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			//empID
+			//Date_needed_off
+			//isapproved
+			//approv_manager
+		}
+		
+		if (menuItem.getSource().equals(searchEmployee)) {
 			
 			/*
 			 * Input some check for manager to distinguish different views in database?
@@ -347,37 +611,65 @@ public class Viewer extends JFrame implements ActionListener {
 				}
 
 		}
-		if (menuItem.getSource().equals(updateSalary)){
-			
-		
-			
-			String newSalary = null;
-		
+		if (menuItem.getSource().equals(updateSalary)){		
 			try {
-				Boolean isValidUser = false;
-				while (!isValidUser){
-				 inputID = JOptionPane.showInputDialog("Enter the EmployeeID to update: ");
-				 if (Database.validateUserID(inputID)){
-					 isValidUser =true;
-					 
-				 }
-				 
+				Boolean nextStep =true;
+				JTextField enterID = new JTextField(15);
+				Object[] message ={
+						"Enter the ID of the employee you would like to update",enterID
+				};
+				do {
+				int option=JOptionPane.showConfirmDialog(null,
+						 message,"update salary", JOptionPane.OK_CANCEL_OPTION);	
+				if (option==JOptionPane.CANCEL_OPTION){
+					nextStep = false;
+					break;
 					
+				
+				}
+				}while(!Database.validateUserID(enterID.getText()));
+					
+				JTextField enterNewSalary = new JTextField(15);
+				if (nextStep){
+					int currentSalary =Database.getCurrentSalary(enterID.getText());
+					Object message2 [] ={
+							"employee ID" + enterID.getText() + "currently makes:" + Integer.toString(currentSalary),
+							enterNewSalary
+					};
+					
+					do{
+						int option2 =JOptionPane.showConfirmDialog(null, message2);
+						if (option2==JOptionPane.CANCEL_OPTION){
+							nextStep = false;
+							break;
+							
+						
+						}
+					}while(! enterNewSalary.getText().matches("[0-9]+"));
+				}
+				if (nextStep){
+				Database.updateSalary(enterID.getText(),Integer.parseInt(enterNewSalary.getText()));
 				}
 				
 					
-					int currentSalary =Database.getCurrentSalary(inputID);
-					Boolean validInput = false;
+					
+					
+					
+					
+					/*
 					while (!validInput){
-					newSalary = JOptionPane.showInputDialog("The Employee " + inputID +"has a current salary of: " + Integer.toString(currentSalary));
 					if (newSalary.matches("[0-9]+")){
 						validInput=true;
+						
+					}
+					else{
+						
 					}
 					
 					}
 					
 					Database.updateSalary(inputID,Integer.parseInt(newSalary));
-				
+				*/
 				}
 					
 				
@@ -422,7 +714,8 @@ public class Viewer extends JFrame implements ActionListener {
 			}
 
 		}
-
+		
+		
 		if (menuItem.getSource().equals(updateEmployee)) {
 			inputID = JOptionPane.showInputDialog("ID for the Employee you would like to update: ");
 			try {
@@ -531,6 +824,17 @@ public class Viewer extends JFrame implements ActionListener {
 							+ addVenTables.getText() + "\n" + "Address: " + addVenAddress.getText(),
 					"Venue Updated", JOptionPane.INFORMATION_MESSAGE);
 
+		}
+		
+		if(menuItem.getSource().equals(viewAverageRating)){
+			JTable mytable = new JTable();
+			try {
+				Database.fillAllTables(mytable, "SELECT employeeID, AVG(rating) as Avg_Rating  FROM venue_emp_rating GROUP BY employeeID;");
+				putTableInFrame(mytable,myPanel);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		// Actions for Blacklisting Employees

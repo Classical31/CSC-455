@@ -3,13 +3,16 @@ use schedule;
 /*Drop tables*/
 drop table if exists scheduled;
 drop table if exists blacklist;
-drop table if exists venue;
-drop table if exists employee;
+
+
 drop table if exists venue_emp_rating;
 drop table if exists salary;
-drop table if exists work_history;
+
 drop table if exists request_off;
 drop table if exists swap_request;
+drop table if exists work_history;
+drop table if exists venue;
+drop table if exists employee;
 
 /*Create tables*/
 create table employee (
@@ -54,14 +57,12 @@ create table scheduled (
 		on delete cascade
 		on update cascade
 );
-
 create table venue_emp_rating(
-	venueID varchar(40), 
-	employeeID varchar(12),
-	rating varchar(12), 
-	primary key(venueID,employeeID, rating), 
-	foreign key(employeeID) references employee(employeeID) on delete cascade, 
-	foreign key(venueID) references venue(venueID) on delete  cascade);
+venueID varchar(40), employeeID varchar(12),rating int, primary key(venueID,employeeID, rating), 
+foreign key(employeeID)
+ references employee(employeeID) on delete cascade, foreign key(venueID) 
+references venue(venueID) on delete  cascade);
+
 
 
 create table salary(
@@ -69,6 +70,8 @@ create table salary(
     salary integer(12),
     primary key(employeeID,salary),
     foreign key(employeeID) references employee(employeeID) on delete cascade);
+
+
 
 create table work_history(
     employeeID varchar(12), 
@@ -90,6 +93,8 @@ create table work_history(
     foreign key(sat) references venue(venueID) on delete cascade,
     foreign key(sun) references venue(venueID) on delete cascade);
 
+create index weekof on work_history(weekof);
+
 create table request_off(
     employeeID varchar(12), 
     date_needed_off date, 
@@ -99,14 +104,12 @@ create table request_off(
     approv_manager varchar(12), 
     foreign key (approv_manager) references employee(employeeID)on delete cascade);
 
-create table swap_request(employeeID varchar(12), 
-    foreign key(employeeID) references employee(employeeID) on delete cascade, 
-    dateOfRequest date, 
-    dateSwap date,
-    location varchar(12),
-    foreign key(location) references venue(venueID) on delete cascade, 
-    employee2 varchar(12) references employee(employeeID) on delete cascade,
-    employee2Approval boolean, 
-    managerApr boolean, 
-    approv_manager varchar(12), 
-    foreign key(approv_manager) references employee(employeeID) on delete cascade);
+create table swap_request(
+ID int NOT NULL AUTO_INCREMENT, Primary Key(ID),
+employeeID varchar(12), foreign key(employeeID) references employee(employeeID) on delete cascade, 
+weekOfRequest date, foreign key(weekOfRequest) references work_history(weekof), dayOf varchar(15),
+
+ employee2 varchar(12) references employee(employeeID) on delete cascade, dayOf2 varchar(15),
+
+employee2Approval boolean, managerApr boolean, approv_manager varchar(12),
+ foreign key(approv_manager) references employee(employeeID) on delete cascade);
