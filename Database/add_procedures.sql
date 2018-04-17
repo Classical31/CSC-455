@@ -25,6 +25,7 @@ drop procedure if exists RemoveBlacklisted;
 
 drop procedure if exists AddScheduled;
 drop procedure if exists SearchScheduled;
+drop procedure if exists SearchScheduledEmployee;
 drop procedure if exists RemoveScheduled;
 
 drop procedure if exists updateSalary;
