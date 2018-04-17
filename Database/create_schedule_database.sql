@@ -113,3 +113,14 @@ weekOfRequest date, foreign key(weekOfRequest) references work_history(weekof), 
 
 employee2Approval boolean, managerApr boolean, approv_manager varchar(12),
  foreign key(approv_manager) references employee(employeeID) on delete cascade);
+ 
+ DELIMITER ///
+CREATE TRIGGER request_update AFTER UPDATE ON request_off FOR EACH ROW
+BEGIN
+	If NEW.ts <> OLD.ts THEN
+		update swap_request set managerApr =1, approv_manager = NEW.approv_manager
+        WHERE OLD.employeeID = swap_request.employeeID;
+        END IF;
+END;
+///
+DELIMITER ;
