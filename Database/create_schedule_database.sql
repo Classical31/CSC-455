@@ -117,12 +117,14 @@ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
  foreign key(approv_manager) references employee(employeeID) on delete cascade);
  
  DELIMITER ///
-CREATE TRIGGER request_update AFTER UPDATE ON request_off FOR EACH ROW
+CREATE trigger emp2check before update on swap_request FOR EACH ROW
 BEGIN
-	If NEW.ts <> OLD.ts THEN
-		update swap_request set managerApr =1, approv_manager = NEW.approv_manager
-        WHERE OLD.employeeID = swap_request.employeeID;
-        END IF;
-END;
+  
+	If NEW.managerApr <> OLD.managerApr THEN
+		If Old.Employee2 is null THEN
+			SIGNAL SQLSTATE '45000' SET message_text= 'Other employee hasn''t approved the swap';
+		End if;
+         END IF;
+END
 ///
 DELIMITER ;
