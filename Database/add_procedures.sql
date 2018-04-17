@@ -250,6 +250,9 @@ create procedure createNewSchedule(
 begin 
 	insert into work_history(employeeID, weekof) values(ID,curDat);
 end //
+
+create view empView as select employeeID, fName, lName, phone from employee;
+
 CREATE PROCEDURE insertSchedule(
 	IN ID varchar(20),
 	IN col VARCHAR(20),
