@@ -183,9 +183,10 @@ public final class Database {
 
 	public static void addRequestOff(String eID, String dateString) throws Exception {
 		try {
-			SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
+			SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd");
 			java.util.Date date = format.parse(dateString);
 			java.sql.Date sqlRequestDate = new java.sql.Date(date.getTime());
+			System.out.println(date);
 
 			connect();
 
@@ -205,7 +206,7 @@ public final class Database {
 	
 	public static void addRequestSwap(String eID, String dateString,String day1,String e2ID,String day2) throws Exception {
 		try {
-			SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
+			SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd");
 			java.util.Date date = format.parse(dateString);
 			java.sql.Date sqlRequestDate = new java.sql.Date(date.getTime());
 
@@ -441,7 +442,7 @@ public final class Database {
 	public static void updateRequestOff(String eID, String dateString, Boolean approved, String manID)
 			throws Exception {
 		try {
-			SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
+			SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd");
 			java.util.Date date = format.parse(dateString);
 			java.sql.Date sqlRequestDate = new java.sql.Date(date.getTime());
 			connect();
