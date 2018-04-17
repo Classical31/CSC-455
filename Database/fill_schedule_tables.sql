@@ -9,8 +9,6 @@ delete from venue_emp_rating;
 delete from request_off;
 delete from swap_request;
 
-
-
 /*Insert data into employee table*/
 insert into employee values("13881", "Malin", "Kraft", "password01", "pho-num-0001", "email01@domain.com", "1");
 insert into employee values("17000", "Christian", "Thorstensson", "password02", "pho-num-0002", "email02@domain.com", "0");
@@ -82,9 +80,9 @@ insert into blacklist values('13881','BD');
 insert into  blacklist values('17041','LA');
 
 /*Insert data into work_history table */
-insert into work_history values('17128','2018-01-01','LA','EC','RB','RA','EX','RB','DD');
-insert into work_history values('17038','2018-01-01','VI','TR','BD','EC','KB','OP','KB');
-insert into work_history values('17094','2018-01-01','OP','FS','JP','VB','HB','SH','BD');
+insert into work_history values('17128','2018-10-11','LA','EC','RB','RA','EX','RB','DD');
+insert into work_history values('17121','2018-4-6','VI','TR','BD','EC','KB','OP','KB');
+insert into work_history values('17094','2018-11-12','OP','FS','JP','VB','HB','SH','BD');
 insert into work_history values('817086','2018-01-01','HR','HR','VB','DU','TR','DD','EC');
 insert into work_history values('17005','2018-01-01','VB','TR','DD','RB','HR','BO','DD');
 insert into work_history values('13881','2018-01-01','HR','BD','LA','RA','EX','VB','BD');
@@ -142,16 +140,20 @@ insert into venue_emp_rating values('RB','17094',8);
 insert into venue_emp_rating values('OP','17100',6);
 
 /*Insert data into request_off table */
-insert into request_off values('17130','2018-04-07',True,'17146');
-insert into request_off values('17129','2018-03-09',True,'17005');
-insert into request_off values('13881','2018-10-8',False,null);
-insert into request_off values('917061','2018-09-11',False,null);
-insert into request_off values('17094','2018-10-06',True,'17131');
-insert into request_off values('17128','2018-03-09',False,null);
-insert into request_off values('17134','2018-03-07',False,null);
-insert into request_off values('817003','2018-04-09',True,'17035');
+insert into request_off (employeeID, date_needed_off, isApproved, approv_manager) values('17130','2018-04-07',True,'17146');
+insert into request_off (employeeID, date_needed_off, isApproved, approv_manager) values('17129','2018-03-09',True,'17005');
+insert into request_off (employeeID, date_needed_off, isApproved, approv_manager) values('13881','2018-10-8',False,null);
+insert into request_off (employeeID, date_needed_off, isApproved, approv_manager) values('917061','2018-09-11',False,null);
+insert into request_off (employeeID, date_needed_off, isApproved, approv_manager) values('17094','2018-10-06',True,'17131');
+insert into request_off (employeeID, date_needed_off, isApproved, approv_manager) values('17128','2018-03-09',False,null);
+insert into request_off (employeeID, date_needed_off, isApproved, approv_manager) values('17134','2018-03-07',False,null);
+insert into request_off (employeeID, date_needed_off, isApproved, approv_manager) values('817003','2018-04-09',True,'17035');
 
 /* Insert data into swap_request */
+insert into swap_request (employeeID, weekOfRequest, dayOf, employee2, dayOf2, employee2Approval, managerApr, approv_manager) values('17121','2018-4-6','mon','17143','fri',False,False,null);
+insert into swap_request (employeeID, weekOfRequest, dayOf, employee2, dayOf2, employee2Approval, managerApr, approv_manager) values('17094','2018-11-12','thurs','817003', 'mon',False,False,null);
+insert into swap_request (employeeID, weekOfRequest, dayOf, employee2, dayOf2, employee2Approval, managerApr, approv_manager) values('17128','2018-10-11','tue','917061', 'wed',True,True,'917063');
+insert into swap_request (employeeID, weekOfRequest, dayOf, employee2, dayOf2, employee2Approval, managerApr, approv_manager) values('17128','2018-10-11','mon','3433020220', 'fri',True,False,null);
 /*
 Example for trigger
 insert into swap_request(employeeID,weekOfRequest,dayOf,employee2,dayOf2) values('17038','2018-04-15','tues','wed','17000');

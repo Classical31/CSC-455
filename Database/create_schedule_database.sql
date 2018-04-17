@@ -102,6 +102,7 @@ create table request_off(
     foreign key (employeeID) references employee(employeeID) on delete cascade,
     isApproved boolean, 
     approv_manager varchar(12), 
+	ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     foreign key (approv_manager) references employee(employeeID)on delete cascade);
 
 create table swap_request(
@@ -112,4 +113,16 @@ weekOfRequest date, foreign key(weekOfRequest) references work_history(weekof), 
  employee2 varchar(12) references employee(employeeID) on delete cascade, dayOf2 varchar(15),
 
 employee2Approval boolean, managerApr boolean, approv_manager varchar(12),
+ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
  foreign key(approv_manager) references employee(employeeID) on delete cascade);
+ 
+ DELIMITER ///
+CREATE TRIGGER request_update AFTER UPDATE ON request_off FOR EACH ROW
+BEGIN
+	If NEW.ts <> OLD.ts THEN
+		update swap_request set managerApr =1, approv_manager = NEW.approv_manager
+        WHERE OLD.employeeID = swap_request.employeeID;
+        END IF;
+END;
+///
+DELIMITER ;
