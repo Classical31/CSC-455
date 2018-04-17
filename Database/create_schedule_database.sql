@@ -68,7 +68,7 @@ references venue(venueID) on delete  cascade);
 create table salary(
     employeeID varchar(12),
     salary integer(12),
-    primary key(employeeID,salary),
+    primary key(employeeID),
     foreign key(employeeID) references employee(employeeID) on delete cascade);
 
 

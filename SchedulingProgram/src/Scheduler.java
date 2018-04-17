@@ -79,7 +79,9 @@ public class Scheduler {
 				isBlackList=false;
 				
 			}
-			
+			else{
+				System.out.println("hit a match!!!");
+			}
 			}
 			// if event in my black array redo it
 			

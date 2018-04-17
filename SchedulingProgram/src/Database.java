@@ -121,9 +121,9 @@ public final class Database {
 			
 			while(rs.next()){
 				String emp =rs.getString(1);
-				Employee e1 = new Employee(emp, null,null, null, null,null);
+				Employee e1 = searchEmployeeID(emp);
 				String ven = rs.getString(2);
-				Venue ven1 = new Venue(ven,null,0,null);
+				Venue ven1 = searchVenueID(ven);
 				Event e = new Event(ven1,e1);
 				blackList.add(e);
 				
@@ -267,7 +267,7 @@ public final class Database {
 			e.printStackTrace();
 		}
 		finally{
-			
+			close();
 		}
 	}
 	
@@ -384,14 +384,17 @@ public final class Database {
 	 * Connects to the database and searches for an employee by their ID and
 	 * returns an employee, or null if no employee if found
 	 */
-	public static void searchEmployeeID(boolean isManager, String eID) throws Exception {
+	public static void searchEmployeeID(boolean isManager, String eID,String employeeIDLoggedIn) throws Exception {
 		/* Set employee as null to begin with */
 
 		try {
 			/* Open connection to the database */
+			if (searchEmployeeID(eID)==null){
+				return;
+			}
 			connect();
 			String myPreparedStatement = null;
-			if (isManager == true) {
+			if (isManager == true || eID.equals(employeeIDLoggedIn)) {
 				myPreparedStatement = "select * from employee natural join salary where employeeID=?";
 			} else {
 				myPreparedStatement = "select * from empView where employeeID = ?";

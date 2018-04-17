@@ -43,14 +43,10 @@ public class Event {
 		return employee;
 		
 	}
-	public Boolean equals(Event e){
-		if (e.getEmployee().getId().equals(getEmployee().getId()) && e.getVenue().getID().equals(getVenue().getID())){
-			return true;
-		}
-		else{
-			return false;
-		}
-		
+	@Override
+	public boolean equals(Object o){
+		Event e = (Event) o;
+		return (this.getEmployee().getId().equals(e.getEmployee().getId()) && this.getVenue().getID().equals(e.getVenue().getID()) );
 		
 		
 	}

@@ -603,7 +603,7 @@ public class Viewer extends JFrame implements ActionListener {
 				inputID = JOptionPane.showInputDialog("Enter a Employee ID: ");
 				
 				try {
-					Database.searchEmployeeID(Login.isManager,inputID);
+					Database.searchEmployeeID(Login.isManager,inputID,employeeIDLoggedIn);
 
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -627,8 +627,8 @@ public class Viewer extends JFrame implements ActionListener {
 					
 				
 				}
-				}while(!Database.validateUserID(enterID.getText()));
-					
+				}while((!Database.validateUserID(enterID.getText())) || enterID.getText().equals(employeeIDLoggedIn));
+				System.out.println(enterID.getText().toString());
 				JTextField enterNewSalary = new JTextField(15);
 				if (nextStep){
 					int currentSalary =Database.getCurrentSalary(enterID.getText());

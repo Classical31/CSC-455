@@ -22,7 +22,7 @@ drop procedure if exists AddBlacklisted;
 drop procedure if exists SearchBlacklistedEmployee;
 drop procedure if exists SearchBlacklistedVenue;
 drop procedure if exists RemoveBlacklisted;
-
+drop view if exists empView
 drop procedure if exists AddScheduled;
 drop procedure if exists SearchScheduled;
 drop procedure if exists RemoveScheduled;
@@ -31,6 +31,8 @@ drop procedure if exists updateSalary;
 drop procedure if exists createNewSchedule;
 drop procedure if exists insertSchedule;
 
+
+create view empView as select employeeID,fName,lname,phone,email from employee;
 delimiter //
 
 create procedure GetTable(
