@@ -88,47 +88,6 @@ insert into work_history values('17005','2018-01-01','VB','TR','DD','RB','HR','B
 insert into work_history values('13881','2018-01-01','HR','BD','LA','RA','EX','VB','BD');
 insert into work_history values('17057','2018-01-01','DD','BO','VI','TR','VB','SH','RA');
 
-/*Insert data into salary table */
-insert into salary values('13881',50000);
-insert into salary values('17000',50000);
-insert into salary values('17005',50000);
-insert into salary values('170104',50000);
-insert into salary values('17014',50000);
-insert into salary values('17022',50000);
-insert into salary values('17035',50000);
-insert into salary values('17037',50000);
-insert into salary values('17038',50000);
-insert into salary values('17041',50000);
-insert into salary values('17057',50000);
-insert into salary values('17064',50000);
-insert into salary values('17084',50000);
-insert into salary values('17088',50000);
-insert into salary values('17089',50000);
-insert into salary values('17094',50000);
-insert into salary values('17100',50000);
-insert into salary values('17108',50000);
-insert into salary values('17121',50000);
-insert into salary values('17126',50000);
-insert into salary values('17128',50000);
-insert into salary values('17129',50000);
-insert into salary values('17130',50000);
-insert into salary values('17131',50000);
-insert into salary values('17132',50000);
-insert into salary values('17134',50000);
-insert into salary values('17136',50000);
-insert into salary values('17137',50000);
-insert into salary values('17139',50000);
-insert into salary values('17140',50000);
-insert into salary values('17142',50000);
-insert into salary values('17143',50000);
-insert into salary values('17144',50000);
-insert into salary values('17145',50000);
-insert into salary values('17146',50000);
-insert into salary values('817003',50000);
-insert into salary values('817042',50000);
-insert into salary values('817086',50000);
-insert into salary values('917061',50000);
-insert into salary values('917063',50000);
 /*Insert data into venue_emp_rating table */
 insert into venue_emp_rating values('OP','17129',10);
 insert into venue_emp_rating values('HB','817042',6);
@@ -154,7 +113,3 @@ insert into swap_request (employeeID, weekOfRequest, dayOf, employee2, dayOf2, e
 insert into swap_request (employeeID, weekOfRequest, dayOf, employee2, dayOf2, employee2Approval, managerApr, approv_manager) values('17094','2018-11-12','thurs','817003', 'mon',False,False,null);
 insert into swap_request (employeeID, weekOfRequest, dayOf, employee2, dayOf2, employee2Approval, managerApr, approv_manager) values('17128','2018-10-11','tue','917061', 'wed',True,True,'917063');
 insert into swap_request (employeeID, weekOfRequest, dayOf, employee2, dayOf2, employee2Approval, managerApr, approv_manager) values('17128','2018-10-11','mon','3433020220', 'fri',True,False,null);
-/*
-Example for trigger
-insert into swap_request(employeeID,weekOfRequest,dayOf,employee2,dayOf2) values('17038','2018-04-15','tues','wed','17000');
-*/

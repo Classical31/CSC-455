@@ -4,7 +4,7 @@ use schedule;
 drop table if exists scheduled;
 drop table if exists blacklist;
 
-
+drop trigger if exists salarymaker;
 drop table if exists venue_emp_rating;
 drop table if exists salary;
 
@@ -39,7 +39,7 @@ create table blacklist (
 	venueID varchar(10),
 	primary key(employeeID, venueID),
 	foreign key(employeeID) references employee(employeeID) 
-		on delete cascade 
+		on delete cascade
 		on update cascade,
 	foreign key(venueID) references venue(venueID)
 		on delete cascade
@@ -58,10 +58,16 @@ create table scheduled (
 		on update cascade
 );
 create table venue_emp_rating(
-venueID varchar(40), employeeID varchar(12),rating int, primary key(venueID,employeeID, rating), 
-foreign key(employeeID)
- references employee(employeeID) on delete cascade, foreign key(venueID) 
-references venue(venueID) on delete  cascade);
+	venueID varchar(40), 
+	employeeID varchar(12),
+	rating int, 
+	primary key(venueID,employeeID, rating), 
+	foreign key(employeeID) references employee(employeeID) 
+	on delete cascade 
+	on update cascade, 
+	foreign key(venueID) references venue(venueID) 
+	on delete cascade
+	on update cascade);
 
 
 
@@ -69,7 +75,9 @@ create table salary(
     employeeID varchar(12),
     salary integer(12),
     primary key(employeeID),
-    foreign key(employeeID) references employee(employeeID) on delete cascade);
+    foreign key(employeeID) references employee(employeeID) 
+    on delete cascade
+    on update cascade);
 
 
 
@@ -84,14 +92,30 @@ create table work_history(
     fri varchar(10),
     sat varchar(10),
     sun varchar(10),
-    foreign key(employeeID) references employee(employeeID) on delete cascade, 
-    foreign key(mon) references venue(venueID) on delete cascade,
-    foreign key(tues) references venue(venueID) on delete cascade,
-    foreign key(wed) references venue(venueID) on delete cascade,
-    foreign key(thurs) references venue(venueID) on delete cascade,
-    foreign key(fri) references venue(venueID) on delete cascade,
-    foreign key(sat) references venue(venueID) on delete cascade,
-    foreign key(sun) references venue(venueID) on delete cascade);
+    foreign key(employeeID) references employee(employeeID) 
+    on delete cascade
+    on update cascade,
+    foreign key(mon) references venue(venueID) 
+    	on delete cascade
+    	on update cascade,
+    foreign key(tues) references venue(venueID)
+    	on delete cascade
+    	on update cascade,
+    foreign key(wed) references venue(venueID) 
+    	on delete cascade
+    	on update cascade,
+    foreign key(thurs) references venue(venueID) 
+    	on delete cascade
+    	on update cascade,
+    foreign key(fri) references venue(venueID) 
+    	on delete cascade
+    	on update cascade,
+    foreign key(sat) references venue(venueID) 
+    	on delete cascade
+    	on update cascade,
+    foreign key(sun) references venue(venueID) 
+    	on delete cascade
+    	on update cascade);
 
 create index weekof on work_history(weekof);
 
@@ -99,30 +123,45 @@ create table request_off(
     employeeID varchar(12), 
     date_needed_off date, 
     primary key(employeeID, date_needed_off), 
-    foreign key (employeeID) references employee(employeeID) on delete cascade,
+    foreign key (employeeID) references employee(employeeID) 
+    on delete cascade
+    on update cascade,
     isApproved boolean, 
     approv_manager varchar(12), 
 	ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    foreign key (approv_manager) references employee(employeeID)on delete cascade);
+    foreign key (approv_manager) references employee(employeeID)
+    on delete cascade
+    on update cascade);
 
 create table swap_request(
-ID int NOT NULL AUTO_INCREMENT, Primary Key(ID),
-employeeID varchar(12), foreign key(employeeID) references employee(employeeID) on delete cascade, 
-weekOfRequest date, foreign key(weekOfRequest) references work_history(weekof), dayOf varchar(15),
-
- employee2 varchar(12) references employee(employeeID) on delete cascade, dayOf2 varchar(15),
-
-employee2Approval boolean, managerApr boolean, approv_manager varchar(12),
-ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
- foreign key(approv_manager) references employee(employeeID) on delete cascade);
+	ID int NOT NULL AUTO_INCREMENT, Primary Key(ID),
+	employeeID varchar(12), 
+	foreign key(employeeID) references employee(employeeID) 
+	on delete cascade
+	on update cascade, 
+	weekOfRequest date, 
+	foreign key(weekOfRequest) references work_history(weekof)
+		on delete cascade
+		on update cascade,
+	dayOf varchar(15),
+	employee2 varchar(12) references employee(employeeID) 
+	on delete cascade 
+	on update cascade, 
+	dayOf2 varchar(15),
+	employee2Approval boolean, 
+	managerApr boolean, 
+	approv_manager varchar(12),
+	ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ 	foreign key(approv_manager) references employee(employeeID) 
+ 	on delete cascade
+ 	on update cascade);
  
  
-drop trigger if exists salarymaker;
 delimiter //
 CREATE trigger salarymaker after insert on employee
-for each row
-begin
-insert into salary values(NEW.EmployeeID,6000);
+	for each row
+	begin
+	insert into salary values(NEW.EmployeeID,6000);
 end//
 
 delimiter ;

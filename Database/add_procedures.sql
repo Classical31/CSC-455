@@ -125,36 +125,36 @@ end//
 select employeeID, employee2, weekOfRequest, dayOf, dayOf2 into @emp1ID, @emp2ID, @weekOf, @day1, @day2 from swap_request where ID = 9;
 */
 create procedure swapDays(
-in e_id1 varchar(15), in e_id2 varchar(15), in day1 varchar(15), in day2 varchar(15),
-in week1 date)
+	in e_id1 varchar(15), in e_id2 varchar(15), in day1 varchar(15), in day2 varchar(15),
+	in week1 date)
 
 begin 
 
-set @s = concat('select ',day1, ' INTO @venue1 from work_history where employeeID=',e_id1,' and weekof=?');
-set @myDate = week1;
-prepare stmt from @s;
+	set @s = concat('select ',day1, ' INTO @venue1 from work_history where employeeID=',e_id1,' and weekof=?');
+	set @myDate = week1;
+	prepare stmt from @s;
 
 
-execute stmt using @mydate;
-deallocate prepare stmt;
+	execute stmt using @mydate;
+	deallocate prepare stmt;
 
 
-set @s1=concat('select ',day2, ' INTO @venue2 from work_history where employeeID=',e_id2,' and weekof=?');
-set @myDate = week1;
-prepare stmt from @s1;
-execute stmt using @mydate;
-deallocate prepare stmt;
+	set @s1=concat('select ',day2, ' INTO @venue2 from work_history where employeeID=',e_id2,' and weekof=?');
+	set @myDate = week1;
+	prepare stmt from @s1;
+	execute stmt using @mydate;
+	deallocate prepare stmt;
 
-set @s2=concat('update work_history set ',day1,'="' ,@venue2,'" where employeeID=',e_id1,' and weekof=?');
-prepare stmt from @s2;
-execute stmt using @mydate;
+	set @s2=concat('update work_history set ',day1,'="' ,@venue2,'" where employeeID=',e_id1,' and weekof=?');
+	prepare stmt from @s2;
+	execute stmt using @mydate;
 
 
 
-set @s3=concat('update work_history set ',day2,'="' ,@venue1,'" where employeeID= ',e_id2,' and weekof=?');
-prepare stmt from @s3;
-execute stmt using @mydate;
-deallocate prepare stmt;
+	set @s3=concat('update work_history set ',day2,'="' ,@venue1,'" where employeeID= ',e_id2,' and weekof=?');
+	prepare stmt from @s3;
+	execute stmt using @mydate;
+	deallocate prepare stmt;
 
 end//
 
@@ -358,6 +358,7 @@ BEGIN
   	set SQL_SAFE_UPDATES=1;
 END//
 
-create view employeeView as select employeeID, fName,lName,phone, email from employee;
+create view employeeView as 
+	select employeeID, fName,lName,phone, email from employee;
 
 delimiter ;

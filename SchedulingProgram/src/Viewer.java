@@ -105,7 +105,7 @@ public class Viewer extends JFrame implements ActionListener {
 
 		// Blacklist Menu Items
 		addBlacklisted = new JMenuItem("Add Blacklisted Employee");
-		searchBlacklistedEmployee = new JMenuItem("Search Blacklisted Employees");
+		searchBlacklistedEmployee = new JMenuItem("View Blacklisted Employees");
 
 		// Add File Menu Items to the File Menu
 		fileMenu.add(viewFullSchedule);
@@ -137,6 +137,7 @@ public class Viewer extends JFrame implements ActionListener {
 		empRequestMenu.add(viewRequestOff);
 		empRequestMenu.add(approveSwap);
 		empRequestMenu.add(viewSwap);
+		empRequestMenu.add(approveRequestOff);
 		
 		empScheduleMenu.add(viewCurrentSchedule);
 		empScheduleMenu.add(viewAllSchedules);
@@ -281,6 +282,7 @@ public class Viewer extends JFrame implements ActionListener {
 		// Creates the schedule by calling fillSchedule from the Scheduler class
 		data = generateSchedule.fillSchedule(empList, colDays, schedulerList, data);
 		LocalDate weekof = getNextWeekStart();
+		
 		String[] days = {"","sun","mon","tues","wed","thurs","fri","sat"};
 		Database db = new Database();
 		try{
@@ -505,7 +507,7 @@ public class Viewer extends JFrame implements ActionListener {
 			JTable myTable2 = new JTable();
 			String mySQLString = "";
 			
-			mySQLString="select * from work_history where weekof = '" + "2018-04-22" +"';";
+			mySQLString="select * from work_history where weekof = '" + getWeekStart() +"';";
 			
 			try {
 				Database.fillAllTables(myTable2, mySQLString);
@@ -937,13 +939,17 @@ public class Viewer extends JFrame implements ActionListener {
 
 			Object[] blackInfo = { "Employee ID: ", addEID, "Venue ID: ", addVID };
 			createBlacklistInfoBox(blackInfo, "Add a New Blacklist");
-			JOptionPane.showMessageDialog(null,
-					"Employee " + addEID.getText() + " is now blacklisted from Venue " + addVID.getText(),
-					"Blacklist Added", JOptionPane.INFORMATION_MESSAGE);
 		}
 
 		if (menuItem.getSource().equals(searchBlacklistedEmployee)) {
-			System.out.println("Search Blacklisted");
+			JTable myTable2 = new JTable();
+			try {
+				Database.fillAllTables(myTable2, "select * from blacklist");
+				putTableInFrame(myTable2,myPanel);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 		}
 		
@@ -1024,8 +1030,8 @@ public class Viewer extends JFrame implements ActionListener {
 			JOptionPane.showConfirmDialog(null, venInfo, boxTitle, JOptionPane.OK_CANCEL_OPTION);
 			Database.addVenue(addID.getText(), addVenName.getText(), addVenTables.getText(), addVenAddress.getText());
 			JOptionPane.showMessageDialog(null,
-					"Successfully added " + addFName.getText() + " " + addLName.getText() + " in the database!",
-					"Added Employee Successfully", JOptionPane.INFORMATION_MESSAGE);
+					"Successfully added " + addVenName.getText() + " in the database!",
+					"Added Venue Successfully", JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1046,17 +1052,22 @@ public class Viewer extends JFrame implements ActionListener {
 	public void createBlacklistInfoBox(Object[] blackInfo, String boxTitle) {
 		try {
 			JOptionPane.showConfirmDialog(null, blackInfo, boxTitle, JOptionPane.OK_CANCEL_OPTION);
-			Database.addBlacklisted(addEID.getText(), addVID.getText());
-			JOptionPane.showMessageDialog(null,
-					"Successfully added a blacklist for employee " + addEID.getText() + " and " + addVID.getText() + " in the database!",
-					"Added Blacklist Successfully", JOptionPane.INFORMATION_MESSAGE);
+		
+			if(Database.searchVenueID(addVID.getText()) != null){
+			
+				Database.addBlacklisted(addEID.getText(), addVID.getText());
+				JOptionPane.showMessageDialog(null,
+						"Successfully added a blacklist for employee " + addEID.getText() + " and " + addVID.getText() + " in the database!",
+						"Added Blacklist Successfully", JOptionPane.INFORMATION_MESSAGE);
+			}else{
+				JOptionPane.showMessageDialog(null,
+						"I'm sorry, something went wrong. Please try to add the blacklist again!",
+						"Add Blacklist Error", JOptionPane.INFORMATION_MESSAGE);
+			}
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(null,
-					"I'm sorry, something went wrong. Please try to add the blacklist again!",
-					"Add Blacklist Error", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 
