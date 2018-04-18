@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,7 +30,8 @@ import javax.swing.*;
 public class Viewer extends JFrame implements ActionListener {
 	private static JMenuItem addEmployee, removeEmployee, updateEmployee, searchEmployee, addVenue, removeVenue,
 			updateVenue, searchVenue, saveFile, refreshTable, addBlacklisted, searchBlacklistedEmployee,
-			createSchedule,updateSalary,requestOff,requestSwitch,viewRequestOff,approveRequestOff,approveSwap,viewSwap,viewCurrentSchedule,viewAllSchedules,logout,viewAverageRating;
+			createSchedule,updateSalary,requestOff,requestSwitch,viewRequestOff,approveRequestOff,approveSwap,viewSwap,viewCurrentSchedule,viewAllSchedules,logout,viewAverageRating,
+			checkRatingDifference,compareSchedule;
 
 	JTextField whatToUpdateField, updateField, updateIDField; // = new JTextField(25);
 	JTextField addID, addFName, addLName, addPassword, addPhone, addEmail, addVenAddress, addVenName, addVenTables,
@@ -90,7 +93,7 @@ public class Viewer extends JFrame implements ActionListener {
 		viewSwap = new JMenuItem("view Request Switch");
 		viewCurrentSchedule = new JMenuItem("View Current Schedule");
 		viewAllSchedules = new JMenuItem("View All Schedules");
-		
+		compareSchedule = new JMenuItem("Compare Schedule");
 
 		// Venue Menu Items
 		addVenue = new JMenuItem("Add Venue");
@@ -111,7 +114,7 @@ public class Viewer extends JFrame implements ActionListener {
 		createSchedule = new JMenuItem("Create Schedule");
 		updateSalary = new JMenuItem("update salary");
 		viewAverageRating  = new JMenuItem("View Average Rating");
-		
+		checkRatingDifference = new JMenuItem("View Difference in Ratings");
 		
 		
 		
@@ -124,12 +127,13 @@ public class Viewer extends JFrame implements ActionListener {
 		empMenu.add(viewSwap);
 		empMenu.add(viewCurrentSchedule);
 		empMenu.add(viewAllSchedules);
+		empMenu.add(compareSchedule);
 
 		//Manager Menu Items
 		managerMenu.add(createSchedule);
 		managerMenu.add(updateSalary);
 		managerMenu.add(viewAverageRating);
-		
+		managerMenu.add(checkRatingDifference);
 		// Add Venue Menu Items to the Employee Menu
 		venMenu.add(searchVenue);
 		blackListMenu.add(searchBlacklistedEmployee);
@@ -179,6 +183,8 @@ public class Viewer extends JFrame implements ActionListener {
 		viewCurrentSchedule.addActionListener(this);
 		viewAllSchedules.addActionListener(this);
 		viewAverageRating.addActionListener(this);
+		checkRatingDifference.addActionListener(this);
+		compareSchedule.addActionListener(this);
 		setJMenuBar(menuBar);
 		//add(doSchedule());
 		
@@ -421,6 +427,54 @@ public class Viewer extends JFrame implements ActionListener {
 		
 			}
 		}
+		if(menuItem.getSource().equals(checkRatingDifference)){
+			JTable myTable2 = new JTable();
+			try{
+				
+				Database.fillAllTables(myTable2, "call differenceInRatings()");
+				putTableInFrame(myTable2,myPanel);
+				
+			}catch(Exception e){
+					
+				}
+			
+		}
+		if(menuItem.getSource().equals(compareSchedule)){
+			JTable myTable2 = new JTable();
+			
+			JTextField requestDate = new JTextField(15);
+			JTextField compareID = new JTextField(15);
+
+			Object[] message={
+					"Enter the weekof you want to compare", requestDate,
+					"Enter the ID you want to compare to", compareID
+			};
+			
+			JOptionPane.showConfirmDialog(null,message);
+			
+			SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd");
+			java.util.Date date;
+			try {
+				date = format.parse(requestDate.getText());
+				java.sql.Date sqlRequestDate = new java.sql.Date(date.getTime());
+				System.out.println(sqlRequestDate);
+				String myString ="call compareSch('"+sqlRequestDate+"','"+compareID.getText()+"','"+employeeIDLoggedIn+"')";
+				//System.out.println(myString);
+				Database.fillAllTables(myTable2,myString);
+				putTableInFrame(myTable2,myPanel);
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			
+		}
+		
+		
 		if(menuItem.getSource().equals(viewRequestOff)){
 			
 			

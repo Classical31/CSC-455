@@ -17,6 +17,7 @@ drop procedure if exists UpdateVenue;
 drop procedure if exists SearchVenue;
 drop procedure if exists SearchVenueID;
 drop procedure if exists RemoveVenue;
+drop procedure if exists compareSch;
 
 drop procedure if exists AddBlacklisted;
 drop procedure if exists SearchBlacklistedEmployee;
@@ -32,8 +33,57 @@ drop procedure if exists updateSalary;
 drop procedure if exists createNewSchedule;
 drop procedure if exists insertSchedule;
 drop procedure if exists swapDays;
+drop procedure if exists differenceInRatings;
+drop function if exists difference;
 
 delimiter //
+
+
+create procedure compareSch(myDate date, in emp1 varchar(15), in emp2 varchar(15))
+begin
+set @s1 = 'select * from (select * from work_history where weekof=? and employeeID=?) as t union (select * from work_history where weekof=? and employeeID=?)' ;
+prepare stmt from @s1;
+set @myDate1 = myDate;
+set @emp01 = emp1;
+set @emp02 = emp2;
+
+execute stmt using @myDate1, @emp01, @myDate1, @emp02;
+
+deallocate prepare stmt;
+end//
+
+create function difference(x int, y int) returns int
+begin
+Declare z int;
+set z = x-y;
+return z;
+end//
+
+
+
+create procedure differenceInRatings()
+begin 
+declare myAvg int default 0;
+declare n int default 0;
+declare i int default 0;
+set i=0;
+drop temporary table if exists differenceRatingTable;
+create temporary table differenceRatingTable( employeeID varchar(15),rating int);
+
+select count(*) from venue_emp_rating into n;
+select avg(rating) from venue_emp_rating  into myAvg;
+while i<n do
+
+	 select employeeID,rating into @ID,@rate From venue_emp_rating Limit i,1;
+     set @Rating = difference(@rate,myAvg);
+     insert into differenceRatingTable values(@ID,@Rating);
+	  set i = i+1;
+END while;
+select * from differenceRatingTable;
+
+end //
+
+
 
 create procedure GetTable(
 	in t_name varchar(15)
