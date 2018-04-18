@@ -54,11 +54,12 @@ public class Viewer extends JFrame implements ActionListener {
 	static JTable table;
 
 	/**
-	 * Constructor that adjusts look and feel, calls the schedule generator
-	 * function and loads the information into a 2D Object array. This data
-	 * array is then loaded into a a JTable. It calls the Overridden classes for
-	 * editing cells in order to make employee names on the left hand side
-	 * interactable.
+	 * 
+	 * Constructor that creates the JMenu and adds the proper menu selection based on if they are a manager or not
+	 * 
+	 * 
+	 * 
+	 * 
 	 * 
 	 */
 	public Viewer(Boolean isManager,String loggedInID) {
@@ -124,17 +125,21 @@ public class Viewer extends JFrame implements ActionListener {
 		empMenu.add(requestOff);
 		empMenu.add(requestSwitch);
 		empMenu.add(viewRequestOff);
-		empMenu.add(approveSwap);
+		
 		empMenu.add(viewSwap);
 		empMenu.add(viewCurrentSchedule);
 		empMenu.add(viewAllSchedules);
 		empMenu.add(compareSchedule);
+		empMenu.add(approveSwap);
 
 		//Manager Menu Items
+	
 		managerMenu.add(createSchedule);
 		managerMenu.add(updateSalary);
 		managerMenu.add(viewAverageRating);
 		managerMenu.add(checkRatingDifference);
+		managerMenu.add(approveRequestOff);
+		
 		// Add Venue Menu Items to the Employee Menu
 		venMenu.add(searchVenue);
 		blackListMenu.add(searchBlacklistedEmployee);
@@ -155,7 +160,7 @@ public class Viewer extends JFrame implements ActionListener {
 			empMenu.add(updateEmployee);
 			empMenu.add(addEmployee);
 			empMenu.add(removeEmployee);
-			empMenu.add(approveRequestOff);
+			
 			
 			
 		}
@@ -205,6 +210,8 @@ public class Viewer extends JFrame implements ActionListener {
 		repaint();
 		revalidate();
 	}
+	
+	//Gets the  date of next Sunday in the month
 	public static LocalDate getNextWeekStart(){
 		LocalDate today =LocalDate.now();
 		LocalDate sunday = today;
@@ -214,6 +221,7 @@ public class Viewer extends JFrame implements ActionListener {
 		 return sunday;
 	}
 	
+	//Gets the Date of the current week's Sunday
 	public static LocalDate getWeekStart(){
 		LocalDate today =LocalDate.now();
 		LocalDate sunday = today;
@@ -528,7 +536,7 @@ public class Viewer extends JFrame implements ActionListener {
 		}
 		
 		if(menuItem.getSource().equals(requestSwitch)){
-			JTextField requestID = new JTextField(15);
+			//JTextField requestID = new JTextField(15);
 			JTextField date_needed = new JTextField(15);
 			String[] daysOfTheWeek = {"mon","tues","wed","thurs","fri","sat","sun"};
 			@SuppressWarnings("unchecked")
@@ -539,8 +547,7 @@ public class Viewer extends JFrame implements ActionListener {
 			JTextField employee2ID = new JTextField(15);
 			
 			Object[] message ={
-					"Enter your ID:",requestID,
-					"week Of", date_needed,
+					"Enter the week Of the needed swap", date_needed,
 					"Day of the Week your shift is you want to switch",dayOfWeek,
 					"employee you want to switch with",employee2ID,
 					"Day of the week their shift is ",dayOfWeek2
@@ -551,7 +558,7 @@ public class Viewer extends JFrame implements ActionListener {
 			
 			if(option == JOptionPane.OK_OPTION){
 				try {
-					Database.addRequestSwap(requestID.getText(), date_needed.getText(), dayOfWeek.getSelectedItem().toString(), employee2ID.getText(), dayOfWeek2.getSelectedItem().toString());
+					Database.addRequestSwap(employeeIDLoggedIn, date_needed.getText(), dayOfWeek.getSelectedItem().toString(), employee2ID.getText(), dayOfWeek2.getSelectedItem().toString());
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -908,6 +915,13 @@ public class Viewer extends JFrame implements ActionListener {
 			System.out.println("Search Blacklisted");
 
 		}
+		
+		/*schedule generator
+		 * function and loads the information into a 2D Object array. This data
+		 * array is then loaded into a a JTable. It calls the Overridden classes for
+		 * editing cells in order to make employee names on the left hand side
+		 * Intractable.
+		 * */
 		if (menuItem.getSource().equals(createSchedule)){
 			try {
 				add(doSchedule());

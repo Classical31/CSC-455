@@ -116,6 +116,18 @@ employee2Approval boolean, managerApr boolean, approv_manager varchar(12),
 ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
  foreign key(approv_manager) references employee(employeeID) on delete cascade);
  
+ 
+drop trigger if exists salarymaker;
+delimiter //
+CREATE trigger salarymaker after insert on employee
+for each row
+begin
+insert into salary values(NEW.EmployeeID,6000);
+end//
+
+delimiter ;
+ 
+ drop trigger if exists emp2check;
  DELIMITER ///
 CREATE trigger emp2check before update on swap_request FOR EACH ROW
 BEGIN

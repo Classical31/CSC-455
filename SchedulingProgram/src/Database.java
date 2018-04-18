@@ -111,7 +111,7 @@ public final class Database {
 		return info;
 
 	}
-	
+	//returns an ArrayList of Events comprised of employees that are blacklisted from certain Venues 
 	public static ArrayList<Event> getBlackList() throws Exception{
 		ArrayList<Event> blackList = new ArrayList<Event>();
 		try{
@@ -141,6 +141,11 @@ public final class Database {
 		
 		return blackList;
 	}
+	
+	/*
+	 * This is an all purpose void function that takes a JTable and query string and constructs and fills the JTable 
+	 * based off the results of the Query
+	 */
 	public static void fillAllTables(JTable table,String Query) throws Exception{
 		
 		
@@ -179,7 +184,7 @@ public final class Database {
 	}
 	
 
-	
+
 
 	public static void addRequestOff(String eID, String dateString) throws Exception {
 		try {
@@ -227,6 +232,14 @@ public final class Database {
 			close();
 		}
 	}
+	
+	
+	
+	/*
+	 * Approve Swap will approve requests
+	 * there are some checks implemented to make sure that a manager cannot approve a swap unless the employee has already 
+	 * approved the swap
+	 */
 	public static void approveSwapRequest(Integer rID,String eID, boolean isManager,boolean accept) throws Exception{
 		String emp2ID = null;
 		Object employee2Approval=null;
@@ -466,7 +479,7 @@ public final class Database {
 			close();
 		}
 	}
-
+	/*Updates the request off to approve or disapprove*/
 	public static void updateRequestOff(String eID, String dateString, Boolean approved, String manID)
 			throws Exception {
 		try {
@@ -631,7 +644,7 @@ public final class Database {
 	}
 
 	/*
-	 * addRequestOff Connects to the database and searches for a venue by its
+	 * searchVenue Connects to the database and searches for a venue by its
 	 * name and returns an venue, or null if no venue if found
 	 */
 	public static Venue searchVenue(String name) throws Exception {
@@ -887,6 +900,12 @@ public final class Database {
 
 	}
 
+	
+	/*
+	 * This function checks the combination of a given  id and password and see if they match in the database
+	 * 
+	 * 
+	 * */
 	public boolean validateLogin(String id, String password) throws Exception {
 		String DBPassword = null;
 		try {
@@ -926,7 +945,9 @@ public final class Database {
 		}
 
 	}
-
+	/*
+	 *
+	 */
 	public static void updateSalary(String id, int salary) throws Exception {
 		connect();
 		preparedStatement = connection.prepareStatement("call updateSalary(?,?)");
@@ -967,6 +988,10 @@ public final class Database {
 
 	}
 
+	
+	/*
+	 * creates the employee's schedule for the week.
+	 */
 	public void createScheduleInDB(String id, LocalDate date) throws Exception {
 		try {
 
@@ -980,6 +1005,10 @@ public final class Database {
 		}
 	}
 
+	
+	/*
+	 * Inserts a venue Into a given employees day
+	 */
 	public void insertIntoSchedule(String id, String weekday, String ven, LocalDate date) throws Exception {
 		try {
 

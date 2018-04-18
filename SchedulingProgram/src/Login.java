@@ -5,7 +5,7 @@ import javax.swing.*;
 public class Login extends JFrame {
 
 	/**
-	 * 
+	 * This is the log in screen, that checks if it is a valid log in and 
 	 */
 	private static final long serialVersionUID = 1L;
 	static boolean isManager;
