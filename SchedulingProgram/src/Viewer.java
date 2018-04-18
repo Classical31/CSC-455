@@ -64,6 +64,7 @@ public class Viewer extends JFrame implements ActionListener {
 	public Viewer(Boolean isManager,String loggedInID) {
 		// FORM TITLE
 		super("Logged In:" + loggedInID);
+		
 		employeeIDLoggedIn = loggedInID;
 		isManager2 = isManager;
 		menuBar = new JMenuBar();
@@ -226,7 +227,7 @@ public class Viewer extends JFrame implements ActionListener {
 	public JPanel doSchedule() throws Exception{
 		TableColumn columnModel;
 		
-		JPanel panel = new JPanel();
+		myPanel.removeAll();
 		Object[] colDays = { "Name", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 		ArrayList<ArrayList<Event>> schedulerList = new ArrayList<ArrayList<Event>>();
 
@@ -236,7 +237,7 @@ public class Viewer extends JFrame implements ActionListener {
 		// SeaGlass. This can be changed if we don't like it.
 		try {
 			empList = Database.getEmployees();
-			UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
+			
 
 		} catch (Exception e) {
 			// If SeaGlass is not available, you can set the GUI to another look
@@ -350,8 +351,8 @@ public class Viewer extends JFrame implements ActionListener {
 
 		// Adds the JTable with the Scroll pane to a Panel so Menus can be
 		// displayed on the Frame
-		panel.setLayout(new BorderLayout());
-		panel.add(pane, BorderLayout.CENTER);
+		myPanel.setLayout(new BorderLayout());
+		myPanel.add(pane, BorderLayout.CENTER);
 
 		table.repaint();
 		// Frame settings
@@ -364,7 +365,7 @@ public class Viewer extends JFrame implements ActionListener {
 		// Adding different Swing components to the Frame
 		
 		//add(panel, BorderLayout.CENTER);
-		return panel;
+		return myPanel;
 	}
 	
 
