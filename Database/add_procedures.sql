@@ -121,7 +121,7 @@ begin
 end//
 
 
-/* Sets the variable values dependent on the ID of the swap request in the swap_request table */
+/* Sets the variable values dependent on the ID of the swap request in the swap_request table
 select employeeID, employee2, weekOfRequest, dayOf, dayOf2 into @emp1ID, @emp2ID, @weekOf, @day1, @day2 from swap_request where ID = 9;
 */
 create procedure swapDays(

@@ -253,6 +253,34 @@ public final class Database {
 				preparedStatement.setString(2, eID);
 				preparedStatement.setInt(3, rID);
 				preparedStatement.executeUpdate();
+				
+				if (accept){
+					preparedStatement = connection.prepareStatement("select * from swap_request where ID=?");
+					preparedStatement.setInt(1, rID);
+					rs = preparedStatement.executeQuery();
+					String employeeID =null;
+					Date weekOfRequest =null;
+					String dayOf=null;
+					String employee2=null;
+					String dayOf2=null;
+					while(rs.next()){
+						employeeID=rs.getString(2);
+						weekOfRequest=rs.getDate(3);
+						dayOf=rs.getString(4);
+						employee2=rs.getString(5);
+						dayOf2=rs.getString(6);
+					}
+					preparedStatement = connection.prepareStatement("call swapDays(?,?,?,?,?)");
+					preparedStatement.setString(1, employeeID);
+					preparedStatement.setString(2, employee2);
+					preparedStatement.setString(3, dayOf);
+					preparedStatement.setString(4, dayOf2);
+					preparedStatement.setObject(5, weekOfRequest);
+					
+					preparedStatement.executeQuery();
+					
+					
+				}
 			}
 			else{
 				JOptionPane.showMessageDialog(null, "You are not allowed to approve this request at this time");
