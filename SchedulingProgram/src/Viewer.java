@@ -29,15 +29,15 @@ import javax.swing.*;
  */
 public class Viewer extends JFrame implements ActionListener {
 	private static JMenuItem addEmployee, removeEmployee, updateEmployee, searchEmployee, addVenue, removeVenue,
-			updateVenue, searchVenue, saveFile, refreshTable, addBlacklisted, searchBlacklistedEmployee,
+			updateVenue, searchVenue, saveFile, addBlacklisted, searchBlacklistedEmployee,
 			createSchedule,updateSalary,requestOff,requestSwitch,viewRequestOff,approveRequestOff,approveSwap,viewSwap,viewCurrentSchedule,viewAllSchedules,logout,viewAverageRating,
-			checkRatingDifference,compareSchedule;
-
+			checkRatingDifference,compareSchedule, viewFullSchedule;
+	
 	JTextField whatToUpdateField, updateField, updateIDField; // = new JTextField(25);
 	JTextField addID, addFName, addLName, addPassword, addPhone, addEmail, addVenAddress, addVenName, addVenTables,
 			addEID, addVID;
 	JMenuBar menuBar;
-	JMenu empMenu, venMenu, fileMenu, blackListMenu,managerMenu;
+	JMenu empMenu, venMenu, fileMenu, blackListMenu,managerMenu, manEmpMenu, manVenMenu, manRatingMenu, empRequestMenu,empScheduleMenu,manBlackListMenu;
 	DefaultTableModel tableModel, model;
 	Scheduler generateSchedule = new Scheduler();
 	ArrayList<Event> scheduler;
@@ -74,92 +74,112 @@ public class Viewer extends JFrame implements ActionListener {
 		fileMenu = new JMenu("File");
 		blackListMenu = new JMenu("Blacklist");
 		managerMenu = new JMenu("Manager");
+		manEmpMenu = new JMenu("Employee Functions");
+		manVenMenu = new JMenu("Venue Functions");
+		manRatingMenu = new JMenu("Employee Ratings");
+		manBlackListMenu = new JMenu("Blacklist Functions");
+		
+		empRequestMenu = new JMenu("Requests");
+		empScheduleMenu = new JMenu("Schedule");
+		
 		saveFile = new JMenuItem("Export to Excel");
 		logout = new JMenuItem("Log out");
 		
-		refreshTable = new JMenuItem("Refresh");
 		myPanel = new JPanel();
 		
 
 		// Employee Menu Items
-		
-		addEmployee = new JMenuItem("Add Employee");
-		removeEmployee = new JMenuItem("Remove Employee");
-		updateEmployee = new JMenuItem("Update Employee");
-		searchEmployee = new JMenuItem("Search Employee");
+		viewFullSchedule = new JMenuItem("View Full Schedule");
 		requestOff = new JMenuItem("Request Off");
-		requestSwitch = new JMenuItem("Request Swtich");
+		requestSwitch = new JMenuItem("Request a Trade Shift");
 		viewRequestOff = new JMenuItem("View Request Off");
-		approveSwap = new JMenuItem("Approve Swap");
+		approveSwap = new JMenuItem("Approve Traded Shifts");
 		approveRequestOff = new JMenuItem("Approve Request Off");
-		viewSwap = new JMenuItem("view Request Switch");
+		viewSwap = new JMenuItem("View Traded Shifts");
 		viewCurrentSchedule = new JMenuItem("View Current Schedule");
-		viewAllSchedules = new JMenuItem("View All Schedules");
-		compareSchedule = new JMenuItem("Compare Schedule");
+		viewAllSchedules = new JMenuItem("View Past Schedules");
+		compareSchedule = new JMenuItem("Compare Schedules");
 
 		// Venue Menu Items
-		addVenue = new JMenuItem("Add Venue");
-		removeVenue = new JMenuItem("Remove Venue");
-		updateVenue = new JMenuItem("Update Venue");
-		searchVenue = new JMenuItem("Search Venue");
+
 
 		// Blacklist Menu Items
 		addBlacklisted = new JMenuItem("Add Blacklisted Employee");
 		searchBlacklistedEmployee = new JMenuItem("Search Blacklisted Employees");
 
 		// Add File Menu Items to the File Menu
-		fileMenu.add(refreshTable);
+		fileMenu.add(viewFullSchedule);
 		fileMenu.add(saveFile);
 		fileMenu.add(logout);
 		
 		//Manager functions
 		createSchedule = new JMenuItem("Create Schedule");
-		updateSalary = new JMenuItem("update salary");
+		updateSalary = new JMenuItem("Update Salary");
 		viewAverageRating  = new JMenuItem("View Average Rating");
 		checkRatingDifference = new JMenuItem("View Difference in Ratings");
 		
+		// Manager Menu Items
 		
+		addEmployee = new JMenuItem("Add Employee");
+		removeEmployee = new JMenuItem("Remove Employee");
+		updateEmployee = new JMenuItem("Update Employee");
+		searchEmployee = new JMenuItem("Search Employee");
+		
+		addVenue = new JMenuItem("Add Venue");
+		removeVenue = new JMenuItem("Remove Venue");
+		updateVenue = new JMenuItem("Update Venue");
+		searchVenue = new JMenuItem("Search Venue");
 		
 		// Add Employee Menu Items to the Employee Menu
 		empMenu.add(searchEmployee);
-		empMenu.add(requestOff);
-		empMenu.add(requestSwitch);
-		empMenu.add(viewRequestOff);
+		empRequestMenu.add(requestOff);
+		empRequestMenu.add(requestSwitch);
+		empRequestMenu.add(viewRequestOff);
+		empRequestMenu.add(approveSwap);
+		empRequestMenu.add(viewSwap);
 		
-		empMenu.add(viewSwap);
-		empMenu.add(viewCurrentSchedule);
-		empMenu.add(viewAllSchedules);
-		empMenu.add(compareSchedule);
-		empMenu.add(approveSwap);
+		empScheduleMenu.add(viewCurrentSchedule);
+		empScheduleMenu.add(viewAllSchedules);
+		empScheduleMenu.add(compareSchedule);
 
 		//Manager Menu Items
-	
+		
+		blackListMenu.add(addBlacklisted);
+		blackListMenu.add(searchBlacklistedEmployee);
+
 		managerMenu.add(createSchedule);
-		managerMenu.add(updateSalary);
-		managerMenu.add(viewAverageRating);
-		managerMenu.add(checkRatingDifference);
-		managerMenu.add(approveRequestOff);
+		manEmpMenu.add(updateSalary);
+		
+		manRatingMenu.add(viewAverageRating);
+		manRatingMenu.add(checkRatingDifference);
+		
+		manEmpMenu.add(approveRequestOff);
+		
+		manBlackListMenu.add(blackListMenu);
+		
+		managerMenu.add(manEmpMenu);
+		managerMenu.add(manVenMenu);
+		managerMenu.add(manRatingMenu);
+		managerMenu.add(blackListMenu);
 		
 		// Add Venue Menu Items to the Employee Menu
 		venMenu.add(searchVenue);
-		blackListMenu.add(searchBlacklistedEmployee);
+		empMenu.add(empScheduleMenu);
+		empMenu.add(empRequestMenu);
 		menuBar.add(fileMenu);
 		menuBar.add(empMenu);
 		menuBar.add(venMenu);
-		menuBar.add(blackListMenu);
 		
 		if (isManager){
 			menuBar.add(managerMenu);
 			
-			venMenu.add(updateVenue);
-			venMenu.add(addVenue);
-			venMenu.add(removeVenue);
+			manVenMenu.add(updateVenue);
+			manVenMenu.add(addVenue);
+			manVenMenu.add(removeVenue);
 			
-			blackListMenu.add(addBlacklisted);
-			
-			empMenu.add(updateEmployee);
-			empMenu.add(addEmployee);
-			empMenu.add(removeEmployee);
+			manEmpMenu.add(updateEmployee);
+			manEmpMenu.add(addEmployee);
+			manEmpMenu.add(removeEmployee);
 			
 			
 			
@@ -172,6 +192,7 @@ public class Viewer extends JFrame implements ActionListener {
 		searchEmployee.addActionListener(this);
 		requestOff.addActionListener(this);
 		requestSwitch.addActionListener(this);
+		viewFullSchedule.addActionListener(this);
 
 		addVenue.addActionListener(this);
 		removeVenue.addActionListener(this);
@@ -192,7 +213,6 @@ public class Viewer extends JFrame implements ActionListener {
 		checkRatingDifference.addActionListener(this);
 		compareSchedule.addActionListener(this);
 		setJMenuBar(menuBar);
-		//add(doSchedule());
 		
 		
 	}
@@ -393,9 +413,7 @@ public class Viewer extends JFrame implements ActionListener {
 
 		// Actions for File Menu Items
 
-		if (menuItem.getSource().equals(refreshTable)) {
 
-		}
 		if (menuItem.getSource().equals(logout)){
 			Login lg = new Login();
 			lg.setVisible(true);
@@ -483,7 +501,20 @@ public class Viewer extends JFrame implements ActionListener {
 			
 		}
 		
-		
+		if(menuItem.getSource().equals(viewFullSchedule)){
+			JTable myTable2 = new JTable();
+			String mySQLString = "";
+			
+			mySQLString="select * from work_history where weekof = '" + "2018-04-22" +"';";
+			
+			try {
+				Database.fillAllTables(myTable2, mySQLString);
+				putTableInFrame(myTable2,myPanel);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		if(menuItem.getSource().equals(viewRequestOff)){
 			
 			

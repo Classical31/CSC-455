@@ -439,7 +439,7 @@ public final class Database {
 			if (isManager == true || eID.equals(employeeIDLoggedIn)) {
 				myPreparedStatement = "select * from employee natural join salary where employeeID=?";
 			} else {
-				myPreparedStatement = "select * from empView where employeeID = ?";
+				myPreparedStatement = "select * from employeeView where employeeID = ?";
 			}
 			/* Executes query and saves result into result set */
 			preparedStatement = connection.prepareStatement(myPreparedStatement);
@@ -467,7 +467,7 @@ public final class Database {
 					JOptionPane
 							.showMessageDialog(null,
 									"ID: " + eID + "\n" + "Name: " + fName + " " + lName + "\n" + "Phone: " + phone
-											+ "\n" + "Email: " + email,
+											+ "\n",
 									"Employee Info", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}

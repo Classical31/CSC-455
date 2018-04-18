@@ -358,4 +358,6 @@ BEGIN
   	set SQL_SAFE_UPDATES=1;
 END//
 
+create view employeeView as select employeeID, fName,lName,phone, email from employee;
+
 delimiter ;
