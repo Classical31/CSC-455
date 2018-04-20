@@ -2,7 +2,7 @@ README
 
 Automated Scheduling System
 
-    An scheduling system that helps managers and employees by automating the schedule process
+    A scheduling system that helps managers and employees by automating the schedule process
 and storing all past and future schedules in a database. The software has a built in log in and log out ability 
 and has multiple functions for both employees and venues. Functions include:
     Employee:
