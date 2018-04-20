@@ -41,7 +41,7 @@ Contains functions that all employees have access to, such as requesting time of
 Contains functions that are visible by both employees and managers and only houses the ability to search for particular venues.
 
 
-	Location of certain features within the database for easy lookup:
+Location of certain features within the database for easy lookup:
 
 	Primary Keys create_schedule_database.sql Line 26
 	
