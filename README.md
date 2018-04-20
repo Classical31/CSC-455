@@ -55,12 +55,12 @@ Location of certain features within the database for easy lookup:
 	
 	Groupby & Avg Viewer.java Line 894
 	
-	Insert & prepared statement database.java Line 1017
+	Insert & prepared statement Database.java Line 1017
 
 	View add_procedures.java Line361
 	
 	Trigger create_schedule.sql Line 120
 	
-	Transaction viewer.java Line 268
+	Transaction Viewer.java Line 268
 	
 	Function add_procedure.sql Line 55
