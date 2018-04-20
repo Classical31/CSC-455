@@ -43,17 +43,34 @@ Contains functions that are visible by both employees and managers and only hous
 
 	Location of certain features within the database for easy lookup:
 
-	Primary Keys  create_schedule_database.sql line 26
-	Foreign Key create_schedule_database.sql in line 87
+	Primary Keys  
+create_schedule_database.sql Line 26
+	
+	Foreign Key 
+create_schedule_database.sql Line 87
 
 	Queries
 
-	Natural Join Database.java line 440
-	Union & Nested Query & stored procedures add_procedures.sql line 42
-	Groupby & Avg Viewer.java line 894
-	Insert & prepared statement database.java line 1017
+	Natural Join 
+Database.java Line 440
+	
+	Union & Nested Query & stored procedures 
+add_procedures.sql Line 42
+	
+	Groupby & Avg 
+Viewer.java Line 894
+	
+	Insert & prepared statement 
+database.java Line 1017
 
-	View add_procedures.java line361
-	Trigger create_schedule.sql line 120
-	Transaction viewer.line268
-	Function add_procedure.sql line 55
+	View 
+add_procedures.java Line361
+	
+	Trigger 
+create_schedule.sql Line 120
+	
+	Transaction 
+viewer.java Line 268
+	
+	Function 
+add_procedure.sql Line 55
