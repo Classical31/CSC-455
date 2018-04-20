@@ -5,22 +5,22 @@ Automated Scheduling System
     A scheduling system that helps managers and employees by automating the schedule process
 and storing all past and future schedules in a database. The software has a built in log in and log out ability 
 and has multiple functions for both employees and venues. Functions include:
-    Employee:
-        Ability to trade shifts with other employees
-            (Checks for the requestee and manager approval before swap is made)
-        Ability to request off
-            (Checks for the approval of a manager)
-        Search Employees based on ID
-        View the currently logged in employee's schedule and past work history.
+	Employee:
+Ability to trade shifts with other employees
+    (Checks for the requestee and manager approval before swap is made)
+Ability to request off
+    (Checks for the approval of a manager)
+Search Employees based on ID
+View the currently logged in employee's schedule and past work history.
     Venue:
-        Search, update, add, and remove venues based on IDs
+Search, update, add, and remove venues based on IDs
     Blacklisting:
-        Blacklist specific employees and venues from being paired together in the scheduler.
+Blacklist specific employees and venues from being paired together in the scheduler.
     Manager:
-        Has the ability to approve of employees requesting time off and employees trying to trade shifts
-        View employee ratings that reflect their performance, as well as showing their deviation from the
-        average rating across all employees
-        Can update an employee's salary
+Has the ability to approve of employees requesting time off and employees trying to trade shifts
+View employee ratings that reflect their performance, as well as showing their deviation from the
+average rating across all employees
+Can update an employee's salary
 
 Functions are divided into different menus. 
     
