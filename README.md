@@ -38,29 +38,4 @@ This menu is only visible by logged in users who are Managers. This menu houses 
 Contains functions that all employees have access to, such as requesting time off, requesting shift trades with other employees, and viewing their own current and past schedules.
     
     Venue
-Contains functions that are visible by both employees and managers and only houses the ability to search for particular venues.
-
-
-Location of certain features within the database for easy lookup:
-
-	Primary Keys create_schedule_database.sql Line 26
-	
-	Foreign Key create_schedule_database.sql Line 87
-
-	Queries
-
-	Natural Join Database.java Line 440
-	
-	Union & Nested Query & stored procedures add_procedures.sql Line 42
-	
-	Groupby & Avg Viewer.java Line 894
-	
-	Insert & prepared statement Database.java Line 1017
-
-	View add_procedures.java Line361
-	
-	Trigger create_schedule.sql Line 120
-	
-	Transaction Viewer.java Line 268
-	
-	Function add_procedure.sql Line 55
+Contains functions that are visible by both employees and managers. Houses the ability to search for particular venues.
