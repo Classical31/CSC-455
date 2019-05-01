@@ -20,11 +20,11 @@ public class Login extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				Database db= new Database();
+
 				try {
 					String passString = new String(passwordTextField.getPassword());
-					if (db.validateLogin(usernameTextField.getText(), passString)){
-						isManager = db.isManager(usernameTextField.getText());
+					if (SchedulerDatabaseUtils.validateLogin(usernameTextField.getText(), passString)){
+						isManager = SchedulerDatabaseUtils.isManager(usernameTextField.getText());
 						Viewer viewer = new Viewer(isManager,usernameTextField.getText());
 
 						viewer.setVisible(true);
@@ -39,17 +39,12 @@ public class Login extends JFrame {
 						usernameTextField.grabFocus();
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
 			}
 
 		});
-		
-		
-		
-		
 		loginPanel.add(usernameTextField);
 		loginPanel.add(passwordTextField);
 		loginPanel.add(loginButton);

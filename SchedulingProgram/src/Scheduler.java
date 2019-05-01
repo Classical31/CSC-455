@@ -1,9 +1,5 @@
-import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Random;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
 
 /**
  * 
@@ -15,7 +11,7 @@ import java.time.LocalDate;
  * employees being scheduled twice on the same day (If they can be two places at
  * once, please tell me, I could use that power.)
  *
- */
+ *  */
 public class Scheduler {
 	/**
 	 * The scheduler adds objects to every event in a cycle (currently one day.)
@@ -35,8 +31,8 @@ public class Scheduler {
 		 * amount.
 		 */
 		try {
-			employees = Database.getEmployees();
-			venues = Database.getVenues();
+			employees = SchedulerDatabaseUtils.getEmployees();
+			venues = SchedulerDatabaseUtils.getVenues();
 
 			for (Venue venue : venues) {
 				int tables = venue.getTables();
@@ -63,7 +59,7 @@ public class Scheduler {
 		ArrayList<Event> blackList=null;
 		int index=0;
 		try {
-			blackList = Database.getBlackList();
+			blackList = SchedulerDatabaseUtils.getBlackList();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

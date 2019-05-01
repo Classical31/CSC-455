@@ -1,5 +1,4 @@
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,22 +33,22 @@ public class Viewer extends JFrame implements ActionListener {
 			checkRatingDifference,compareSchedule, viewFullSchedule;
 	
 	JTextField whatToUpdateField, updateField, updateIDField; // = new JTextField(25);
-	JTextField addID, addFName, addLName, addPassword, addPhone, addEmail, addVenAddress, addVenName, addVenTables,
+	static JTextField addID, addFName, addLName, addPassword, addPhone, addEmail, addVenAddress, addVenName, addVenTables,
 			addEID, addVID;
-	JMenuBar menuBar;
-	JMenu empMenu, venMenu, fileMenu, blackListMenu,managerMenu, manEmpMenu, manVenMenu, manRatingMenu, empRequestMenu,empScheduleMenu,manBlackListMenu;
-	DefaultTableModel tableModel, model;
-	Scheduler generateSchedule = new Scheduler();
-	ArrayList<Event> scheduler;
-	Object[][] data;
-	String inputID;
-	Employee employee;
-	ArrayList<Employee> empList;
-	Boolean isManager2;
-	String employeeIDLoggedIn;
-	JPanel myPanel;
+	static JMenuBar menuBar;
+	static JMenu empMenu, venMenu, fileMenu, blackListMenu,managerMenu, manEmpMenu, manVenMenu, manRatingMenu, empRequestMenu,empScheduleMenu,manBlackListMenu;
+	static DefaultTableModel tableModel, model;
+	static Scheduler generateSchedule = new Scheduler();
+	static ArrayList<Event> scheduler;
+	static Object[][] data;
+	static String inputID;
+	static Employee employee;
+	static ArrayList<Employee> empList;
+	static Boolean isManager2;
+	static String employeeIDLoggedIn;
+	static JPanel myPanel;
 
-	Object[] empInfo, venInfo, blackInfo;
+	static Object[] empInfo, venInfo, blackInfo;
 
 	static JTable table;
 
@@ -111,7 +110,7 @@ public class Viewer extends JFrame implements ActionListener {
 		fileMenu.add(viewFullSchedule);
 		fileMenu.add(saveFile);
 		fileMenu.add(logout);
-		
+
 		//Manager functions
 		createSchedule = new JMenuItem("Create Schedule");
 		updateSalary = new JMenuItem("Update Salary");
@@ -252,8 +251,8 @@ public class Viewer extends JFrame implements ActionListener {
 		 return sunday;
 	}
 	
-	@SuppressWarnings("static-access")
-	public JPanel doSchedule() throws Exception{
+
+	public  JPanel doSchedule() throws Exception{
 		TableColumn columnModel;
 		
 		myPanel.removeAll();
@@ -265,7 +264,7 @@ public class Viewer extends JFrame implements ActionListener {
 		// Get employee data and stores into a list. Sets look and feel to
 		// SeaGlass. This can be changed if we don't like it.
 		try {
-			empList = Database.getEmployees();
+			empList = SchedulerDatabaseUtils.getEmployees();
 			
 
 		} catch (Exception e) {
@@ -284,31 +283,27 @@ public class Viewer extends JFrame implements ActionListener {
 		LocalDate weekof = getNextWeekStart();
 		
 		String[] days = {"","sun","mon","tues","wed","thurs","fri","sat"};
-		Database db = new Database();
 		try{
-			db.connect();
+			SchedulerDatabaseUtils.connect();
 			
-			(db.getConnection()).setAutoCommit(false);
+			(SchedulerDatabaseUtils.getConnection()).setAutoCommit(false);
 		for(int i =0; i<data.length;i++){
 			for(int j=0;j<data[i].length;j++){
 				Employee id =  (Employee) data[i][0];
 				
 				if (j==0){
-					//create the schedule for the that person
-					//add new comment
-					db.createScheduleInDB(id.getId(), weekof);
+					SchedulerDatabaseUtils.createScheduleInDB(id.getId(), weekof);
 					
 				}
 				else{
-					//System.out.println(data[i][j]==null);
-					String myString = "'"+(String)data[i][j]+"'";
-					//System.out.println(myString);
+
+					String myString = "'"+data[i][j]+"'";
 					if (myString.equals("''")){
 						
 						myString = "'#'";
 					}
-					//System.out.println(myString);
-					db.insertIntoSchedule(id.getId(), days[j], myString, weekof);
+
+					SchedulerDatabaseUtils.insertIntoSchedule(id.getId(), days[j], myString, weekof);
 				}
 				
 			}
@@ -316,17 +311,17 @@ public class Viewer extends JFrame implements ActionListener {
 		}
 		catch(Exception e){
 			System.out.println(e.toString());
-			db.getConnection().rollback();
+			SchedulerDatabaseUtils.getConnection().rollback();
 		}
-		db.getConnection().commit();
-		db.close();
+		SchedulerDatabaseUtils.getConnection().commit();
+		SchedulerDatabaseUtils.close();
 		
 		model = new DefaultTableModel(data, colDays);
 		table = new JTable(model);
 		// create new table with an overriden tooltip
 		HashMap<String, Venue> venueDict = new HashMap<String, Venue>();
 		try {
-			for (Venue venue : Database.getVenues()) {
+			for (Venue venue : SchedulerDatabaseUtils.getVenues()) {
 				venueDict.put(venue.getID(), venue);
 			}
 		} catch (Exception e2) {
@@ -444,7 +439,7 @@ public class Viewer extends JFrame implements ActionListener {
 				}
 				
 				//System.out.println(myTable2.getSelectedRows().toString());
-				Database.fillAllTables(myTable2,mySQLString);
+				SchedulerDatabaseUtils.fillAllTables(myTable2,mySQLString);
 				putTableInFrame(myTable2,myPanel);
 				
 			
@@ -460,7 +455,7 @@ public class Viewer extends JFrame implements ActionListener {
 			JTable myTable2 = new JTable();
 			try{
 				
-				Database.fillAllTables(myTable2, "call differenceInRatings()");
+				SchedulerDatabaseUtils.fillAllTables(myTable2, "call differenceInRatings()");
 				putTableInFrame(myTable2,myPanel);
 				
 			}catch(Exception e){
@@ -489,7 +484,7 @@ public class Viewer extends JFrame implements ActionListener {
 				System.out.println(sqlRequestDate);
 				String myString ="call compareSch('"+sqlRequestDate+"','"+compareID.getText()+"','"+employeeIDLoggedIn+"')";
 				//System.out.println(myString);
-				Database.fillAllTables(myTable2,myString);
+				SchedulerDatabaseUtils.fillAllTables(myTable2,myString);
 				putTableInFrame(myTable2,myPanel);
 			} catch (ParseException e1) {
 				// TODO Auto-generated catch block
@@ -510,7 +505,7 @@ public class Viewer extends JFrame implements ActionListener {
 			mySQLString="select * from work_history where weekof = '" + getWeekStart() +"';";
 			
 			try {
-				Database.fillAllTables(myTable2, mySQLString);
+				SchedulerDatabaseUtils.fillAllTables(myTable2, mySQLString);
 				putTableInFrame(myTable2,myPanel);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -531,7 +526,7 @@ public class Viewer extends JFrame implements ActionListener {
 				}
 				
 				//System.out.println(myTable2.getSelectedRows().toString());
-				Database.fillAllTables(myTable2,mySQLString);
+				SchedulerDatabaseUtils.fillAllTables(myTable2,mySQLString);
 				putTableInFrame(myTable2,myPanel);
 				
 				
@@ -546,7 +541,7 @@ public class Viewer extends JFrame implements ActionListener {
 			LocalDate weekStart =getWeekStart();
 			JTable myTable2 = new JTable();
 			try {
-				Database.fillAllTables(myTable2, "Select * from work_history where EmployeeID='" + employeeIDLoggedIn+"' and weekof='" + weekStart+"';");
+				SchedulerDatabaseUtils.fillAllTables(myTable2, "Select * from work_history where EmployeeID='" + employeeIDLoggedIn+"' and weekof='" + weekStart+"';");
 				putTableInFrame(myTable2,myPanel);
 				
 			} catch (Exception e) {
@@ -559,7 +554,7 @@ public class Viewer extends JFrame implements ActionListener {
 			JTable myTable2 = new JTable();
 			myPanel.removeAll();
 			try {
-				Database.fillAllTables(myTable2, "Select * from work_history where EmployeeID='" + employeeIDLoggedIn+"';");
+				SchedulerDatabaseUtils.fillAllTables(myTable2, "Select * from work_history where EmployeeID='" + employeeIDLoggedIn+"';");
 				putTableInFrame(myTable2,myPanel);
 				
 			} catch (Exception e) {
@@ -591,7 +586,7 @@ public class Viewer extends JFrame implements ActionListener {
 			
 			if(option == JOptionPane.OK_OPTION){
 				try {
-					Database.addRequestSwap(employeeIDLoggedIn, date_needed.getText(), dayOfWeek.getSelectedItem().toString(), employee2ID.getText(), dayOfWeek2.getSelectedItem().toString());
+					SchedulerDatabaseUtils.addRequestSwap(employeeIDLoggedIn, date_needed.getText(), dayOfWeek.getSelectedItem().toString(), employee2ID.getText(), dayOfWeek2.getSelectedItem().toString());
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -611,7 +606,7 @@ public class Viewer extends JFrame implements ActionListener {
 			
 			if(option == JOptionPane.OK_OPTION){
 				try {
-					Database.approveSwapRequest(Integer.parseInt(requestID.getText()), employeeIDLoggedIn, isManager2, true);
+					SchedulerDatabaseUtils.approveSwapRequest(Integer.parseInt(requestID.getText()), employeeIDLoggedIn, isManager2, true);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -619,7 +614,7 @@ public class Viewer extends JFrame implements ActionListener {
 			}
 			else if(option == JOptionPane.NO_OPTION){
 				try{
-					Database.approveSwapRequest(Integer.parseInt(requestID.getText()), employeeIDLoggedIn, isManager2, false);
+					SchedulerDatabaseUtils.approveSwapRequest(Integer.parseInt(requestID.getText()), employeeIDLoggedIn, isManager2, false);
 				}
 				catch(Exception e){
 					e.printStackTrace();
@@ -644,7 +639,7 @@ public class Viewer extends JFrame implements ActionListener {
 		
 		if(option == JOptionPane.YES_OPTION){
 			try {
-				Database.updateRequestOff(requestID.getText(),date_needed.getText(),true,employeeIDLoggedIn);
+				SchedulerDatabaseUtils.updateRequestOff(requestID.getText(),date_needed.getText(),true,employeeIDLoggedIn);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -652,7 +647,7 @@ public class Viewer extends JFrame implements ActionListener {
 		}
 		else if(option == JOptionPane.NO_OPTION){
 			try {
-				Database.updateRequestOff(requestID.getText(),date_needed.getText(),false,employeeIDLoggedIn);
+				SchedulerDatabaseUtils.updateRequestOff(requestID.getText(),date_needed.getText(),false,employeeIDLoggedIn);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -676,7 +671,7 @@ public class Viewer extends JFrame implements ActionListener {
 			
 			if (option == JOptionPane.OK_OPTION){
 				try {
-					Database.addRequestOff(employeeIDLoggedIn, date_needed.getText());
+					SchedulerDatabaseUtils.addRequestOff(employeeIDLoggedIn, date_needed.getText());
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -698,7 +693,7 @@ public class Viewer extends JFrame implements ActionListener {
 				inputID = JOptionPane.showInputDialog("Enter a Employee ID: ");
 				
 				try {
-					Database.searchEmployeeID(Login.isManager,inputID,employeeIDLoggedIn);
+					SchedulerDatabaseUtils.searchEmployeeID(Login.isManager,inputID,employeeIDLoggedIn);
 
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -722,11 +717,11 @@ public class Viewer extends JFrame implements ActionListener {
 					
 				
 				}
-				}while((!Database.validateUserID(enterID.getText())) || enterID.getText().equals(employeeIDLoggedIn));
+				}while((!SchedulerDatabaseUtils.validateUserID(enterID.getText())) || enterID.getText().equals(employeeIDLoggedIn));
 				System.out.println(enterID.getText().toString());
 				JTextField enterNewSalary = new JTextField(15);
 				if (nextStep){
-					int currentSalary =Database.getCurrentSalary(enterID.getText());
+					int currentSalary = SchedulerDatabaseUtils.getCurrentSalary(enterID.getText());
 					Object message2 [] ={
 							"employee ID" + enterID.getText() + "currently makes:" + Integer.toString(currentSalary),
 							enterNewSalary
@@ -743,7 +738,7 @@ public class Viewer extends JFrame implements ActionListener {
 					}while(! enterNewSalary.getText().matches("[0-9]+"));
 				}
 				if (nextStep){
-				Database.updateSalary(enterID.getText(),Integer.parseInt(enterNewSalary.getText()));
+				SchedulerDatabaseUtils.updateSalary(enterID.getText(),Integer.parseInt(enterNewSalary.getText()));
 				}
 				
 					
@@ -763,7 +758,7 @@ public class Viewer extends JFrame implements ActionListener {
 					
 					}
 					
-					Database.updateSalary(inputID,Integer.parseInt(newSalary));
+					SchedulerDatabaseUtils.updateSalary(inputID,Integer.parseInt(newSalary));
 				*/
 				}
 					
@@ -799,8 +794,8 @@ public class Viewer extends JFrame implements ActionListener {
 		if (menuItem.getSource().equals(removeEmployee)) {
 			inputID = JOptionPane.showInputDialog("Enter the Employee ID for the employee you wish to remove: ");
 			try {
-				employee = Database.searchEmployeeID(inputID);
-				Database.removeEmployee(inputID);
+				employee = SchedulerDatabaseUtils.searchEmployeeID(inputID);
+				SchedulerDatabaseUtils.removeEmployee(inputID);
 				JOptionPane.showMessageDialog(null, "Employee " + employee.getFullName() + " has been removed.",
 						"Removed employee", JOptionPane.INFORMATION_MESSAGE);
 			} catch (Exception e) {
@@ -814,7 +809,7 @@ public class Viewer extends JFrame implements ActionListener {
 		if (menuItem.getSource().equals(updateEmployee)) {
 			inputID = JOptionPane.showInputDialog("ID for the Employee you would like to update: ");
 			try {
-				employee = Database.searchEmployeeID(inputID);
+				employee = SchedulerDatabaseUtils.searchEmployeeID(inputID);
 				if(employee != null){
 					addFName = new JTextField(employee.getFirstName());
 					addLName = new JTextField(employee.getLastName());
@@ -846,7 +841,7 @@ public class Viewer extends JFrame implements ActionListener {
 			inputID = JOptionPane.showInputDialog("Enter a Venue ID Name: ");
 
 			try {
-				venue = Database.searchVenueID(inputID);
+				venue = SchedulerDatabaseUtils.searchVenueID(inputID);
 				if (venue == null) {
 					JOptionPane.showMessageDialog(null, "No venue with that ID was found", "Invaild ID",
 							JOptionPane.INFORMATION_MESSAGE);
@@ -882,12 +877,12 @@ public class Viewer extends JFrame implements ActionListener {
 		if (menuItem.getSource().equals(removeVenue)) {
 			inputID = JOptionPane.showInputDialog("Enter a Venue ID: ");
 			try {
-				venue = Database.searchVenueID(inputID);
+				venue = SchedulerDatabaseUtils.searchVenueID(inputID);
 				if (venue == null) {
 					JOptionPane.showMessageDialog(null, "No venue with that ID was found", "Invaild ID",
 							JOptionPane.INFORMATION_MESSAGE);
 				} else {
-					Database.removeVenue(inputID);
+					SchedulerDatabaseUtils.removeVenue(inputID);
 					JOptionPane.showMessageDialog(null, "Venue " + venue.getName() + " has been removed.", "Venue Info",
 							JOptionPane.INFORMATION_MESSAGE);
 				}
@@ -901,7 +896,7 @@ public class Viewer extends JFrame implements ActionListener {
 			inputID = JOptionPane.showInputDialog("ID for the Venue you would like to update: ");
 
 			try {
-				venue = Database.searchVenueID(inputID);
+				venue = SchedulerDatabaseUtils.searchVenueID(inputID);
 				addVenName = new JTextField(venue.getName());
 				addVenTables = new JTextField(String.valueOf(venue.getTables()));
 				addVenAddress = new JTextField(venue.getAddress());
@@ -924,7 +919,7 @@ public class Viewer extends JFrame implements ActionListener {
 		if(menuItem.getSource().equals(viewAverageRating)){
 			JTable mytable = new JTable();
 			try {
-				Database.fillAllTables(mytable, "SELECT employeeID, AVG(rating) as Avg_Rating  FROM venue_emp_rating GROUP BY employeeID;");
+				SchedulerDatabaseUtils.fillAllTables(mytable, "SELECT employeeID, AVG(rating) as Avg_Rating  FROM venue_emp_rating GROUP BY employeeID;");
 				putTableInFrame(mytable,myPanel);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -944,7 +939,7 @@ public class Viewer extends JFrame implements ActionListener {
 		if (menuItem.getSource().equals(searchBlacklistedEmployee)) {
 			JTable myTable2 = new JTable();
 			try {
-				Database.fillAllTables(myTable2, "select * from blacklist");
+				SchedulerDatabaseUtils.fillAllTables(myTable2, "select * from blacklist");
 				putTableInFrame(myTable2,myPanel);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -981,7 +976,7 @@ public class Viewer extends JFrame implements ActionListener {
 	public void createEmployeeInfoBox(Object[] empInfo, String boxTitle) {
 		try {
 			JOptionPane.showConfirmDialog(null, empInfo, boxTitle, JOptionPane.OK_CANCEL_OPTION);
-			Database.addEmployee(addID.getText(), addFName.getText(), addLName.getText(), addPassword.getText(),
+			SchedulerDatabaseUtils.addEmployee(addID.getText(), addFName.getText(), addLName.getText(), addPassword.getText(),
 					addPhone.getText(), addEmail.getText(), false);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -1003,8 +998,8 @@ public class Viewer extends JFrame implements ActionListener {
 	public void updateEmployeeInfoBox(Object[] empInfo, String boxTitle) {
 		try {
 			JOptionPane.showConfirmDialog(null, empInfo, boxTitle, JOptionPane.OK_CANCEL_OPTION);
-			Database.removeEmployee(inputID);
-			Database.addEmployee(inputID, addFName.getText(), addLName.getText(), addPassword.getText(),
+			SchedulerDatabaseUtils.removeEmployee(inputID);
+			SchedulerDatabaseUtils.addEmployee(inputID, addFName.getText(), addLName.getText(), addPassword.getText(),
 					addPhone.getText(), addEmail.getText(), false);
 			JOptionPane.showMessageDialog(null,
 					"Successfully updated " + addFName.getText() + " " + addLName.getText() + " in the database!",
@@ -1028,7 +1023,7 @@ public class Viewer extends JFrame implements ActionListener {
 	public void createVenueInfoBox(Object[] venInfo, String boxTitle) {
 		try {
 			JOptionPane.showConfirmDialog(null, venInfo, boxTitle, JOptionPane.OK_CANCEL_OPTION);
-			Database.addVenue(addID.getText(), addVenName.getText(), addVenTables.getText(), addVenAddress.getText());
+			SchedulerDatabaseUtils.addVenue(addID.getText(), addVenName.getText(), addVenTables.getText(), addVenAddress.getText());
 			JOptionPane.showMessageDialog(null,
 					"Successfully added " + addVenName.getText() + " in the database!",
 					"Added Venue Successfully", JOptionPane.INFORMATION_MESSAGE);
@@ -1053,9 +1048,9 @@ public class Viewer extends JFrame implements ActionListener {
 		try {
 			JOptionPane.showConfirmDialog(null, blackInfo, boxTitle, JOptionPane.OK_CANCEL_OPTION);
 		
-			if(Database.searchVenueID(addVID.getText()) != null){
+			if(SchedulerDatabaseUtils.searchVenueID(addVID.getText()) != null){
 			
-				Database.addBlacklisted(addEID.getText(), addVID.getText());
+				SchedulerDatabaseUtils.addBlacklisted(addEID.getText(), addVID.getText());
 				JOptionPane.showMessageDialog(null,
 						"Successfully added a blacklist for employee " + addEID.getText() + " and " + addVID.getText() + " in the database!",
 						"Added Blacklist Successfully", JOptionPane.INFORMATION_MESSAGE);
@@ -1081,8 +1076,8 @@ public class Viewer extends JFrame implements ActionListener {
 	public void updateVenueInfoBox(Object[] venInfo, String boxTitle) {
 		try {
 			JOptionPane.showConfirmDialog(null, venInfo, boxTitle, JOptionPane.OK_CANCEL_OPTION);
-			Database.removeVenue(inputID);
-			Database.addVenue(inputID, addVenName.getText(), addVenTables.getText(), addVenAddress.getText());
+			SchedulerDatabaseUtils.removeVenue(inputID);
+			SchedulerDatabaseUtils.addVenue(inputID, addVenName.getText(), addVenTables.getText(), addVenAddress.getText());
 			JOptionPane.showMessageDialog(null,
 					"Successfully updated " + addVenName.getText() + " in the database!",
 					"Updated Venue Successfully", JOptionPane.INFORMATION_MESSAGE);

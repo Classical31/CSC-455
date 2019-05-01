@@ -29,7 +29,7 @@ public class Venue {
 		 * Sets new venue ID in the database.
 		 */
 		try {
-			Database.updateVenue("venueID", iD, this.ID);
+			SchedulerDatabaseUtils.updateVenue("venueID", iD, this.ID);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -50,7 +50,7 @@ public class Venue {
 		 * Sets new venue name in the database.
 		 */
 		try {
-			Database.updateVenue("name", name, this.name);
+			SchedulerDatabaseUtils.updateVenue("name", name, this.name);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -71,7 +71,7 @@ public class Venue {
 		 * Sets new venue table amount in the database.
 		 */
 		try {
-			Database.updateVenue("tableNum", String.valueOf(tables), String.valueOf(this.tables));
+			SchedulerDatabaseUtils.updateVenue("tableNum", String.valueOf(tables), String.valueOf(this.tables));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -92,7 +92,7 @@ public class Venue {
 		 * Sets new venue Iaddress in the database.
 		 */
 		try {
-			Database.updateVenue("address", address, this.address);
+			SchedulerDatabaseUtils.updateVenue("address", address, this.address);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
