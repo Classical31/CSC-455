@@ -341,7 +341,7 @@ Version 5.1.42
   - Fix for Bug#73474 (19365473), Invalid empty line in MANIFEST.MF
 
   - Fix for Bug#70436 (17527948), Incorrect mapping of windows timezone to Olson timezone.
-    TimeZone mappings were revised in order to use latest data from IANA Time Zone Database and Unicode CLDR.
+    TimeZone mappings were revised in order to use latest data from IANA Time Zone SchedulerDatabaseUtils and Unicode CLDR.
 
   - Fix for Bug73163 (19171665), IndexOutOfBoundsException thrown preparing statement.
     Regression test added. Fix was included in patch from 5.1.32: "Fix for failing tests when running test suite with Java 6+".
@@ -876,7 +876,7 @@ Version 5.1.42
 	in the string, LIKE will take care of that, otherwise we now use = . The only exception is
 	information_schema database which is handled separately. Patch covers both getTables() and getColumns().
 
-  - Fix for Bug#61150 - First call to stored procedure fails with "No Database Selected".
+  - Fix for Bug#61150 - First call to stored procedure fails with "No SchedulerDatabaseUtils Selected".
 	The workaround introduced in DatabaseMetaData.getCallStmtParameterTypes to fix
 	the bug in server where SHOW CREATE PROCEDURE was not respecting lower-case table names
 	is misbehaving when connection is not attached to database and on non-casesensitive OS.
@@ -4117,7 +4117,7 @@ nn-nn-07 - Version 3.1.15
 
 	- Fixed BUG#3848 - Using a MySQLDatasource without server name fails
 
-	- Fixed BUG#3920 - "No Database Selected" when using
+	- Fixed BUG#3920 - "No SchedulerDatabaseUtils Selected" when using
 	  MysqlConnectionPoolDataSource.
 
 	- Fixed BUG#3873 - PreparedStatement.getGeneratedKeys() method returns only

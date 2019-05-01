@@ -11,163 +11,179 @@ public class Employee {
 	private String email;
 	private boolean manager;
 
-	/**
-	 * 
-	 * @param i
-	 *            Use ID
-	 * @param f
-	 *            First name
-	 * @param l
-	 *            Last name
-	 * @param p
-	 *            Phone Number
-	 * @param ip
-	 *            Password
-	 * @param e
-	 *            Email
-	 */
-	public Employee(String i, String f, String l, String ip, String p, String e) {
-		/**
-		 * constructor
-		 */
-		id = i;
-		firstName = f;
-		lastName = l;
-		password = ip;
-		phone = p;
-		manager = false;
-		email = e;
+	// do not allow initialization
+	//force them to use builder
+	//this will insure that each employee object is immutable
+	private Employee() {
+
 	}
+	/**
+	 * Returns employee's email.
+	 */
 
 	public String getEmail() {
-		/**
-		 * Returns employee's email.
-		 */
+
 		return email;
 	}
-
-	public void setEmail(String email) {
-
-		/**
-		 * Sets employee's email.
-		 */
-		this.email = email;
-	}
+	/**
+	 * Returns employee's first name.
+	 */
 
 	public String getFirstName() {
 
-		/**
-		 * Returns employee's first name.
-		 */
+
 		return firstName;
 	}
 
-	public void setFirstName(String firstName) {
-
-		/**
-		 * Sets employee's email.
-		 */
-		this.firstName = firstName;
-	}
+	/**
+	 * Returns employee's ID number.
+	 */
 
 	public String getId() {
 
-		/**
-		 * Returns employee's ID number.
-		 */
 		return id;
 	}
 
-	public void setId(String id) {
-		/**
-		 * Sets employee's ID number.
-		 */
-		this.id = id;
-	}
+	/**
+	 * Returns employee's last name.
+	 */
 
 	public String getLastName() {
-		/**
-		 * Returns employee's last name.
-		 */
+
 		return lastName;
 	}
-
-	public void setLastName(String lastName) {
-
-		/**
-		 * Sets employee's last name.
-		 */
-		this.lastName = lastName;
-	}
-
+	/**
+	 * Returns employee's first name concatenated with their last name.
+	 */
 	public String getFullName() {
 
-		/**
-		 * Returns employee's first name concatenated with their last name.
-		 */
+
 		return this.firstName + " " + this.lastName;
 	}
-
+	/**
+	 * Returns employee's phone number.
+	 */
 	public String getPhone() {
 
-		/**
-		 * Returns employee's phone number.
-		 */
+
 		return phone;
 	}
-
-	public void setPhone(String phone) {
-
-		/**
-		 * Sets employee's phone number.
-		 */
-		this.phone = phone;
-	}
-
+	/**
+	 * Returns boolean value telling if this employee is a manager.
+	 */
 	public boolean isManager() {
 
-		/**
-		 * Returns boolean value telling if this employee is a manager.
-		 */
+
 		return manager;
 	}
-
-	public void setManager(boolean manager) {
-
-		/**
-		 * Sets boolean value telling if this employee is a manager.
-		 */
-		this.manager = manager;
-	}
-
+	/**
+	 * Returns employee's password.
+	 */
 	public String getPassword() {
 
-		/**
-		 * Returns employee's password.
-		 */
+
 		return password;
 	}
 
-	public void setPassword(String pw) {
-		/**
-		 * Sets employee's password.
-		 */
-		this.password = pw;
+	/**
+	 * Two employees will only be equal iff their IDs match,
+	 */
+	@Override
+	public boolean equals(Object employee) {
+		if(this == employee)
+		{
+			return true;
+		}
+		if(!(employee instanceof Employee)) {
+			return false;
+		}
+		else{
+			return this.getId().equals(((Employee) employee).getId());
+		}
+
 	}
 
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
+
+	@Override
 	public String toString() {
-
-		/**
-		 * Returns employee's first name concatenated with their last name.
-		 */
-		return getFullName();
+		final StringBuffer sb = new StringBuffer("Employee{");
+		sb.append("id='").append(id).append('\'');
+		sb.append(", firstName='").append(firstName).append('\'');
+		sb.append(", lastName='").append(lastName).append('\'');
+		sb.append(", password='").append(password).append('\'');
+		sb.append(", phone='").append(phone).append('\'');
+		sb.append(", email='").append(email).append('\'');
+		sb.append(", manager=").append(manager);
+		sb.append('}');
+		return sb.toString();
 	}
 
-	public boolean equals(Employee employee) {
-		/**
-		 * Determines if two employee objects are equal.
-		 */
-		return this.getId().equals(employee.getId());
+	public static class EmployeeBuilder
+	{
+		private String id;
+		private String firstName;
+		private String lastName;
+		private String password;
+		private String phone;
+		private String email;
+		private boolean manager;
 
+		public EmployeeBuilder(String id)
+		{
+			this.id =  id;
+		}
+
+		public EmployeeBuilder firstName(String firstName)
+		{
+			this.firstName = firstName;
+			return this;
+		}
+
+		public EmployeeBuilder lastName(String lastName)
+		{
+			this.lastName = lastName;
+			return this;
+		}
+
+		public EmployeeBuilder password(String password)
+		{
+			this.password = password;
+			return this;
+		}
+
+		public EmployeeBuilder phone(String phone)
+		{
+			this.phone = phone;
+			return this;
+		}
+		public EmployeeBuilder email(String email)
+		{
+			this.email = email;
+			return this;
+		}
+
+		public EmployeeBuilder isManager(boolean isManager)
+		{
+			this.manager = isManager;
+			return this;
+		}
+		public Employee build()
+		{
+			Employee employee = new Employee();
+			employee.id = this.id;
+			employee.firstName = this.firstName;
+			employee.lastName = this.lastName;
+			employee.password = this.password;
+			employee.email = this.email;
+			employee.phone = this.phone;
+			employee.manager = this.manager;
+			return employee;
+
+		}
 	}
+
 }
